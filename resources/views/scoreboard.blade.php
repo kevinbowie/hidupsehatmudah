@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../bootstrap/css/bootstrap-responsive.css">
+	<link rel="stylesheet" href="../bootstrap/css/calendar.css">
+	<script src="../bootstrap/js/jquery.js"></script>
+	<style type="text/css">
+		.table th{
+			text-align: center;
+		}
+		.btn-twitter {
+			padding-left: 30px;
+			background: rgba(0, 0, 0, 0) -20px 6px no-repeat;
+			background-position: -20px 11px !important;
+		}
+		.btn-twitter:hover {
+			background-position:  -20px -18px !important;
+		}
+		.container{
+			width: 1400px;
+		}
+		.form-control{
+			width: 200px;
+		}
+	</style>
+	<script type="text/javascript">
+	$(function(ready){
+	    $('#categorys').change(function(){ 
+	    	var value = $(this).val();
+
+	    	$.ajax({
+		        type:"POST",
+		        url : "<?php echo url('register.php'); ?>",
+		        data : {userId : "value"},
+		        success : function(){
+		        	alert('yes');
+		        },
+		       	error: function(){
+		       		alert("<?php echo url('register.php'); ?>");
+		       	}
+		    });
+		});
+
+		$('#btnCategory').click(function(){
+			var value = $('#category').val();
+			$('form').attr('action', '../scoreboard/' + value.toLowerCase());
+		});
+	});
+	</script>
+</head>
+<body>
+@include('navbar/navbar_2')
+<div class="container">
+	<!-- <div class="row"> -->
+		<div class="col-md-7">
+			<form method="GET" action="">
+				<label for="category">Kategori</label>
+				<select class="form-control" name="category" id="category">
+					<option value="All" selected>Semua</option>
+					<option value="Breakfast">Sarapan</option>
+					<option value="Lunch">Makan Siang</option>
+					<option value="Dinner">Makan Malam</option>
+					<option value="Exercise">Olahraga</option>
+					<option value="Sleep">Tidur</option>
+					<option value="Drink">Minum</option>
+				</select>
+				<br>
+				<button class="btn btn-primary" type="submit" id="btnCategory">Perbaharui</button>
+			</form>
+		<?php 
+		$i = 1; $lastCategory = ""; $nowCategory = ""; $len = count($data); $exists = false; $reload = true; 
+		?>
+		@foreach ($data as $datas) <?php
+			$nowCategory = $datas->cat_id;
+			if ($lastCategory != $nowCategory){
+				if ($i > 1)
+					echo "</tbody></table>";
+				$i = 1;
+				$exists = false;
+				$reload = true;
+			echo "<div class='page-header'><h2>";
+				if ($datas->category == 'breakfast')
+					echo "Sarapan";
+				else if ($datas->category == 'lunch')
+					echo "Makan Siang";
+				else if ($datas->category == 'dinner')
+					echo "Makan Malam";
+				else if ($datas->category == 'exercise')
+					echo "Olahraga";
+				else if ($datas->category == 'drink')
+					echo "Minum";
+				else
+					echo "Tidur";
+			echo "</h2></div>
+				<table class='table table-bordered' class='someid'>
+			   		<thead>
+			    		<tr>
+				        	<th width='10%'>Nomor</th>
+				        	<th width='50%'>Nama</th>
+				        	<th width='17%' style='word-wrap: break-word;'>Streak Tertinggi</th>
+				        	<th width='17%'>Streak Sekarang</th>
+				      	</tr>
+			    	</thead>
+			    	<tbody>";
+		    }
+	    	if (! $all){
+	    		if ($i > 6 && Auth::user()->id != $datas->user_id && $exists == false){
+	    			echo "<tr><td class='text-center'>.....</td>
+			      		<td>.....</td>
+			      		<td class='text-right'>.....</td>
+			      		<td class='text-right'>.....</td>
+			      	</tr>";
+			      	$exists = true;
+			      	$reload = false;
+	    		}
+	    		else if (Auth::user()->id == $datas->user_id){
+			    	echo "<tr class='info'>";
+			    	echo "<td class='text-center'>" . $i . "</td>
+			      		<td>" . $datas->user_fullname . "</td>
+			      		<td class='text-right'>" . $datas->best_streak . "</td>
+			      		<td class='text-right'>" . $datas->now_streak . "</td>
+			      	</tr>";
+			      	$exists = true;
+			      	if ($i > 5)
+			      		$reload = false;
+			    }
+			    else if ($reload){
+			    	echo "<tr>";
+			    	echo "<td class='text-center'>" . $i . "</td>
+			      		<td>" . $datas->user_fullname . "</td>
+			      		<td class='text-right'>" . $datas->best_streak . "</td>
+			      		<td class='text-right'>" . $datas->now_streak . "</td>
+			      	</tr>";
+			    }
+			}
+			else{
+				if (Auth::user()->id == $datas->user_id)
+			    	echo "<tr class='info'>";				   
+			    else 
+			    	echo "<tr>";
+
+			    	echo "<td class='text-center'>" . $i . "</td>
+			      		<td>" . $datas->user_fullname . "</td>
+			      		<td class='text-right'>" . $datas->best_streak . "</td>
+			      		<td class='text-right'>" . $datas->now_streak . "</td>
+			      	</tr>";
+			}
+		    	
+      		$i++;
+      		$len -= 1;
+      		$lastCategory = $nowCategory; 
+      		if ($len == 0){
+      			echo "</tbody></table><br>";
+      		} ?>
+		@endforeach
+		<!-- </div> -->
+		<!-- <div class="col-lg-5">
+			<div class="page-header">
+				<div class="pull-right form-inline">
+					<div class="btn-group">
+						<button class="btn btn-primary" data-calendar-nav="prev"><< Prev</button>
+						<button class="btn" data-calendar-nav="today">Today</button>
+						<button class="btn btn-primary" data-calendar-nav="next">Next >></button>
+					</div>
+					<div class="btn-group">
+						<button class="btn btn-warning" data-calendar-view="year">Year</button>
+						<button class="btn btn-warning active" data-calendar-view="month">Month</button>
+					</div>
+				</div>
+				<h3></h3>
+			</div>
+			<div class="span6"><div id="calendar"></div></div>
+		</div> -->
+	</div>
+	<script type="text/javascript" src="../bootstrap/js/underscore-min.js"></script>
+	<script src="../bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="../bootstrap/js/calendar.js"></script>
+	<script type="text/javascript" src="../bootstrap/js/app.js"></script>
+</div>
+</body>
+</html>
