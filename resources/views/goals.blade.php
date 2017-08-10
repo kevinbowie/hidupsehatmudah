@@ -1,3 +1,14 @@
+<?php 
+if (isset($_GET['month']) && isset($_GET['year'])){
+    $bln = $_GET['month'];
+    $thn = $_GET['year'];
+}
+else{
+    $bln = date("m");
+    $thn = date("Y");
+}
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,21 +18,49 @@
 	<script src="bootstrap/js/bootstrap.min.js"></script>
 	<script src="bootstrap/js/highcharts.js"></script>
 	<script src="bootstrap/js/exporting.js"></script>
-
+    <style type="text/css">
+        body{
+          background: url("images/bg green.jpg") no-repeat center;
+          background-size: cover;
+        }
+    </style>
 </head>
 @include ('navbar/navbar_2')
 <body>
-<div id="container">
+<div class="container">
 	<div class="row">
-		<!-- <div class="col-lg-6">
-			<div id="breakfast"></div>
-			<div id="lunch"></div>
-			<div id="dinner"></div>
-		</div> -->
+        <div class="col-lg-12">
+            <form method="get" onSubmit="return validateForm()" action="<?php route('goals'); ?>">
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-3 form-group">
+                            <label>Tahun</label>
+                            <div class="form-group">
+                                <input type="text" name="year" value="<?php echo $thn; ?>" class="form-control input-small">
+                            </div>
+                        </div>
+                        <div class="col-sm-3 form-group">
+                            <label>Bulan</label>
+                            <div class="form-group">
+                                <input type="text" name="month" value="<?php echo $bln; ?>" class="form-control input-small">
+                            </div>
+                        </div>  
+                        <div style="margin-top: 25px;"><button class="btn btn-primary" id="submit" type="submit">Refresh</button></div>
+                    </div>  
+                </div>
+            </form>
+        </div>
 		<div class="col-lg-6">
-			<div id="exercise"></div>
-			<div id="drink"></div>
-			<div id="sleep"></div>	
+			<div id="calories"></div><br>
+			<div id="protein"></div><br>
+            <div id="fat"></div><br>
+            <div id="carbo"></div><br>
+		</div>
+		<div class="col-lg-6">
+			<div id="exercise"></div><br>
+			<div id="drink"></div><br>
+			<div id="sleep"></div><br>
+            <div id="bb"></div><br>
 		</div>
 	</div>
 </div>
@@ -29,9 +68,21 @@
 </body>
 </html>
 <script type="text/javascript">
+var month = "<?php echo $bulan; ?>";
+function validateForm(){
+    flag = false;
+    if ($('input[name="year"]').val().length != 4)
+        alert('Format Tahun Tidak Tepat !');
+    else if (! ($('input[name="month"]').val() > 0 && $('input[name="month"]').val() < 13))
+        alert('Format Bulan Tidak Tepat !');
+    else 
+        flag = true;
+    return flag;
+};
+
 $(document).ready(function() {
     var title = {
-        text: 'Konsumsi Air Minum Agustus 2017'   
+        text: 'Konsumsi Air Minum ' + month + ' 2017'
     };
 
     var subtitle = {
@@ -43,7 +94,7 @@ $(document).ready(function() {
             text: 'Tanggal'
         },
         categories: [<?php 
-            foreach($drink as $values){
+            foreach($data as $values){
                 echo $values->date; ?> , <?php
             }        
         ?>]
@@ -61,7 +112,7 @@ $(document).ready(function() {
     };   
 
     var tooltip = {
-        valueSuffix: '\xB0C'
+        valueSuffix: 'Liter'
     };
 
     var legend = {
@@ -73,9 +124,9 @@ $(document).ready(function() {
 
     var series =  [
         {
-            name: 'Liter',
+            name: 'Minum',
             data:   [<?php 
-                foreach($drink as $values){
+                foreach($data as $values){
                     echo $values->drink; ?> , <?php
                 }        
             ?>]
@@ -97,7 +148,7 @@ $(document).ready(function() {
 
 Highcharts.chart('sleep', {
     title : {
-        text: 'Jam Tidur Agustus 2017'   
+        text: 'Jam Tidur ' + month + ' 2017'   
     },
 
     subtitle : {
@@ -109,7 +160,7 @@ Highcharts.chart('sleep', {
             text: 'Tanggal'
         },
         categories: [<?php 
-            foreach($drink as $values){
+            foreach($data as $values){
                 echo $values->date; ?> , <?php
             }        
         ?>]
@@ -117,7 +168,7 @@ Highcharts.chart('sleep', {
 
     yAxis : {
         title: {
-            text: 'Liter'
+            text: 'Jam'
         },
         plotLines: [{
             value: 0,
@@ -127,7 +178,7 @@ Highcharts.chart('sleep', {
     },
 
     tooltip : {
-        valueSuffix: '\xB0C'
+        valueSuffix: 'Jam'
     },
 
     legend : {
@@ -139,9 +190,9 @@ Highcharts.chart('sleep', {
 
     series :  [
         {
-            name: 'Jam',
+            name: 'Tidur',
             data:   [<?php 
-                foreach($drink as $values){
+                foreach($data as $values){
                     echo $values->sleep; ?> , <?php
                 }        
             ?>]
@@ -149,152 +200,367 @@ Highcharts.chart('sleep', {
     ]
 });
 
-
-Highcharts.chart('breakfast', {
-
-    title: {
-        text: 'Kesehatan Berdasarkan Sarapan, 2010-2017'
-    },
-
-    subtitle: {
-        text: 'Source: thesolarfoundation.com'
-    },
-
-    yAxis: {
-        title: {
-            text: 'Number of Employees'
-        }
-    },
-    legend: {
-        layout: 'vertical',
-        align: 'right',
-        verticalAlign: 'middle'
-    },
-
-    plotOptions: {
-        series: {
-            pointStart: 2010
-        }
-    },
-
-    series: [{
-        name: 'Realisasi',
-        data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
-    }, {
-        name: 'Target',
-        data: [100000, 100000, 100000, 100000, 100000, 100000, 100000, 100000]
-    }]
-
-});
-
-Highcharts.chart('lunch', {
-
-    title: {
-        text: 'Kesehatan Berdasarkan Sarapan, 2010-2017'
-    },
-
-    subtitle: {
-        text: 'Source: thesolarfoundation.com'
-    },
-
-    yAxis: {
-        title: {
-            text: 'Number of Employees'
-        }
-    },
-    legend: {
-        layout: 'vertical',
-        align: 'right',
-        verticalAlign: 'middle'
-    },
-
-    plotOptions: {
-        series: {
-            pointStart: 2010
-        }
-    },
-
-    series: [{
-        name: 'Realisasi',
-        data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
-    }, {
-        name: 'Target',
-        data: [100000, 100000, 100000, 100000, 100000, 100000, 100000, 100000]
-    }]
-
-});
-
-Highcharts.chart('dinner', {
-
-    title: {
-        text: 'Kesehatan Berdasarkan Sarapan, 2010-2017'
-    },
-
-    subtitle: {
-        text: 'Source: thesolarfoundation.com'
-    },
-
-    yAxis: {
-        title: {
-            text: 'Number of Employees'
-        }
-    },
-    legend: {
-        layout: 'vertical',
-        align: 'right',
-        verticalAlign: 'middle'
-    },
-
-    plotOptions: {
-        series: {
-            pointStart: 2010
-        }
-    },
-
-    series: [{
-        name: 'Realisasi',
-        data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
-    }, {
-        name: 'Target',
-        data: [100000, 100000, 100000, 100000, 100000, 100000, 100000, 100000]
-    }]
-
-});
-
 Highcharts.chart('exercise', {
-
-    title: {
-        text: 'Kesehatan Berdasarkan Sarapan, 2010-2017'
+    title : {
+        text: 'Durasi Olahraga ' + month + ' 2017'   
     },
 
-    subtitle: {
-        text: 'Source: thesolarfoundation.com'
+    subtitle : {
+        //text: 'Source: WorldClimate.com'
     },
 
-    yAxis: {
+    xAxis : {
         title: {
-            text: 'Number of Employees'
-        }
+            text: 'Tanggal'
+        },
+        categories: [<?php 
+            foreach($data as $values){
+                echo $values->date; ?> , <?php
+            }        
+        ?>]
     },
-    legend: {
+
+    yAxis : {
+        title: {
+            text: 'Jam'
+        },
+        plotLines: [{
+            value: 0,
+            width: 1,
+            color: '#808080'
+        }]
+    },
+
+    tooltip : {
+        valueSuffix: 'Jam'
+    },
+
+    legend : {
         layout: 'vertical',
         align: 'right',
-        verticalAlign: 'middle'
+        verticalAlign: 'middle',
+        borderWidth: 0
     },
 
-    plotOptions: {
-        series: {
-            pointStart: 2010
+    series :  [
+        {
+            name: 'Olahraga',
+            data:   [<?php 
+                foreach($data as $values){
+                    echo $values->exercise; ?> , <?php
+                }        
+            ?>]
         }
+    ]
+});
+
+Highcharts.chart('calories', {
+    title : {
+        text: 'Konsumsi Kalori ' + month + ' 2017'   
     },
 
-    series: [{
-        name: 'Realisasi',
-        data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
-    }, {
-        name: 'Target',
-        data: [100000, 100000, 100000, 100000, 100000, 100000, 100000, 100000]
-    }]
+    subtitle : {
+        //text: 'Source: WorldClimate.com'
+    },
 
+    xAxis : {
+        title: {
+            text: 'Tanggal'
+        },
+        categories: [<?php 
+            foreach($data as $values){
+                echo $values->date; ?> , <?php
+            }        
+        ?>]
+    },
+
+    yAxis : {
+        title: {
+            text: 'Kalori'
+        },
+        plotLines: [{
+            value: 0,
+            width: 1,
+            color: '#808080'
+        }]
+    },
+
+    tooltip : {
+        valueSuffix: 'Kalori'
+    },
+
+    legend : {
+        layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'middle',
+        borderWidth: 0
+    },
+
+    series :  [
+        {
+            name: 'Konsumsi',
+            data: [<?php 
+                foreach($data as $values){
+                    echo $values->calories; ?> , <?php
+                }        
+            ?>]
+        },
+        {
+            name: 'Target',
+            data: [<?php 
+                foreach($data as $values){
+                    echo $values->calories_goal; ?>, <?php
+                }
+            ?>]
+        }
+    ]
+});
+
+Highcharts.chart('protein', {
+    title : {
+        text: 'Konsumsi Protein ' + month + ' 2017'   
+    },
+
+    subtitle : {
+        //text: 'Source: WorldClimate.com'
+    },
+
+    xAxis : {
+        title: {
+            text: 'Tanggal'
+        },
+        categories: [<?php 
+            foreach($data as $values){
+                echo $values->date; ?> , <?php
+            }        
+        ?>]
+    },
+
+    yAxis : {
+        title: {
+            text: 'Kalori'
+        },
+        plotLines: [{
+            value: 0,
+            width: 1,
+            color: '#808080'
+        }]
+    },
+
+    tooltip : {
+        valueSuffix: 'Kalori'
+    },
+
+    legend : {
+        layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'middle',
+        borderWidth: 0
+    },
+
+    series :  [
+        {
+            name: 'Konsumsi',
+            data: [<?php 
+                foreach($data as $values){
+                    echo $values->protein; ?> , <?php
+                }        
+            ?>]
+        },
+        {
+            name: 'Target',
+            data: [<?php 
+                foreach($data as $values){
+                    echo $values->protein_goal; ?>, <?php
+                }
+            ?>]
+        }
+    ]
+});
+
+Highcharts.chart('fat', {
+    title : {
+        text: 'Konsumsi Lemak ' + month + ' 2017'   
+    },
+
+    subtitle : {
+        //text: 'Source: WorldClimate.com'
+    },
+
+    xAxis : {
+        title: {
+            text: 'Tanggal'
+        },
+        categories: [<?php 
+            foreach($data as $values){
+                echo $values->date; ?> , <?php
+            }        
+        ?>]
+    },
+
+    yAxis : {
+        title: {
+            text: 'Kalori'
+        },
+        plotLines: [{
+            value: 0,
+            width: 1,
+            color: '#808080'
+        }]
+    },
+
+    tooltip : {
+        valueSuffix: 'Kalori'
+    },
+
+    legend : {
+        layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'middle',
+        borderWidth: 0
+    },
+
+    series :  [
+        {
+            name: 'Konsumsi',
+            data: [<?php 
+                foreach($data as $values){
+                    echo $values->fat; ?> , <?php
+                }        
+            ?>]
+        },
+        {
+            name: 'Target',
+            data: [<?php 
+                foreach($data as $values){
+                    echo $values->fat_goal; ?>, <?php
+                }
+            ?>]
+        }
+    ]
+});
+
+Highcharts.chart('carbo', {
+    title : {
+        text: 'Konsumsi Karbohidrat ' + month + ' 2017'   
+    },
+
+    subtitle : {
+        //text: 'Source: WorldClimate.com'
+    },
+
+    xAxis : {
+        title: {
+            text: 'Tanggal'
+        },
+        categories: [<?php 
+            foreach($data as $values){
+                echo $values->date; ?> , <?php
+            }        
+        ?>]
+    },
+
+    yAxis : {
+        title: {
+            text: 'Kalori'
+        },
+        plotLines: [{
+            value: 0,
+            width: 1,
+            color: '#808080'
+        }]
+    },
+
+    tooltip : {
+        valueSuffix: 'Kalori'
+    },
+
+    legend : {
+        layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'middle',
+        borderWidth: 0
+    },
+
+    series :  [
+        {
+            name: 'Konsumsi',
+            data: [<?php 
+                foreach($data as $values){
+                    echo $values->carbohydrate; ?> , <?php
+                }        
+            ?>]
+        },
+        {
+            name: 'Target',
+            data: [<?php 
+                foreach($data as $values){
+                    echo $values->carbohydrate_goal; ?>, <?php
+                }
+            ?>]
+        }
+    ]
+});
+
+Highcharts.chart('bb', {
+    title : {
+        text: 'Berat Badan ' + month + ' 2017'   
+    },
+
+    subtitle : {
+        //text: 'Source: WorldClimate.com'
+    },
+
+    xAxis : {
+        title: {
+            text: 'Tanggal'
+        },
+        categories: [<?php 
+            foreach($data as $values){
+                echo $values->date; ?> , <?php
+            }        
+        ?>]
+    },
+
+    yAxis : {
+        title: {
+            text: 'KG'
+        },
+        plotLines: [{
+            value: 0,
+            width: 1,
+            color: '#808080'
+        }]
+    },
+
+    tooltip : {
+        valueSuffix: 'KG'
+    },
+
+    legend : {
+        layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'middle',
+        borderWidth: 0
+    },
+
+    series :  [
+        {
+            name: 'Berat Badan',
+            data: [<?php 
+                foreach($data as $values){
+                    echo $values->weight; ?> , <?php
+                }        
+            ?>]
+        },
+        {
+            name: 'Target',
+            data: [<?php 
+                foreach($data as $values){
+                    echo $values->weight_goal; ?>, <?php
+                }
+            ?>]
+        }
+    ]
 });
 </script>

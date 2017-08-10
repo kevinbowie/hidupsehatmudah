@@ -98,9 +98,9 @@
 		<thead>
 			<tr>
 	        	<th width='10%' style='text-align:center;'>No</th>
-	        	<th width='20%' style='text-align:center;'>Name</th>
-	        	<th width='15%' style='word-wrap: break-word; text-align:center;'>Distance (km)</th>
-	        	<th width='15%' style='text-align:center;'>Time</th>
+	        	<th width='20%' style='text-align:center;'>Nama</th>
+	        	<th width='15%' style='word-wrap: break-word; text-align:center;'>Jarak (km)</th>
+	        	<th width='15%' style='text-align:center;'>Waktu</th>
 	      	</tr>
 		</thead>
 		<tbody>; <?php

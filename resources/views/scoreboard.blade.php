@@ -7,6 +7,9 @@
 	<link rel="stylesheet" href="../bootstrap/css/calendar.css">
 	<script src="../bootstrap/js/jquery.js"></script>
 	<style type="text/css">
+		.table{
+			background: #eee;
+		}
 		.table th{
 			text-align: center;
 		}
@@ -18,44 +21,29 @@
 		.btn-twitter:hover {
 			background-position:  -20px -18px !important;
 		}
-		.container{
-			width: 1400px;
-		}
 		.form-control{
 			width: 200px;
+		}
+		body{
+		    background: url("images/bg green.jpg") no-repeat center;
+		    background-size: cover;
 		}
 	</style>
 	<script type="text/javascript">
 	$(function(ready){
-	    $('#categorys').change(function(){ 
-	    	var value = $(this).val();
-
-	    	$.ajax({
-		        type:"POST",
-		        url : "<?php echo url('register.php'); ?>",
-		        data : {userId : "value"},
-		        success : function(){
-		        	alert('yes');
-		        },
-		       	error: function(){
-		       		alert("<?php echo url('register.php'); ?>");
-		       	}
-		    });
-		});
-
-		$('#btnCategory').click(function(){
+		/*$('#btnCategory').click(function(){
 			var value = $('#category').val();
 			$('form').attr('action', '../scoreboard/' + value.toLowerCase());
-		});
+		});*/
 	});
 	</script>
 </head>
 <body>
 @include('navbar/navbar_2')
 <div class="container">
-	<!-- <div class="row"> -->
-		<div class="col-md-7">
-			<form method="GET" action="">
+	<div class="row">
+		<!-- <div class="col-md-7"> -->
+			<form method="GET" action="<?php route('scoreboard'); ?>">
 				<label for="category">Kategori</label>
 				<select class="form-control" name="category" id="category">
 					<option value="All" selected>Semua</option>
@@ -67,7 +55,7 @@
 					<option value="Drink">Minum</option>
 				</select>
 				<br>
-				<button class="btn btn-primary" type="submit" id="btnCategory">Perbaharui</button>
+				<button class="btn btn-primary" type="submit" id="btnCategory">Tampilkan</button>
 			</form>
 		<?php 
 		$i = 1; $lastCategory = ""; $nowCategory = ""; $len = count($data); $exists = false; $reload = true; 
@@ -173,6 +161,8 @@
 			</div>
 			<div class="span6"><div id="calendar"></div></div>
 		</div> -->
+		<!-- </div> -->
+		</div>
 	</div>
 	<script type="text/javascript" src="../bootstrap/js/underscore-min.js"></script>
 	<script src="../bootstrap/js/bootstrap.min.js"></script>

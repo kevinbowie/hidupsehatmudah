@@ -1,12 +1,19 @@
+<style type="text/css">
+	img{
+		width: 250px;
+		height: 200px;
+	}
+</style>
 <script type="text/javascript" src="try.js"></script>
 <div id="login-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
   	<div class="modal-dialog">
     	<div class="modal-content">
       		<div class="modal-header" align="center">
-      			<img id="img_logo" class="img-circle" src="http://bootsnipp.com/img/logo.jpg"></img>
+      			<img id="img_logo" class="img-circle" src="images/2.jpg"></img>
         		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
         			<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
         		</button>
+      			<h3 class="text-center">LOGIN</h3>
       		</div>
       		<div id="div-forms">
       			<!-- <form id="login-form" method="post" action="CRUDController@login"> -->

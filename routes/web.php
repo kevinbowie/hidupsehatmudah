@@ -72,6 +72,8 @@ Route::get('todolist/rekom/{listid}/{dtlid}', 'CRUDController@addToDoListByRecom
 
 Route::post('todolist/activity/others', 'CRUDController@updateActivityOthers');
 
+Route::post('todolist/activity/sleep', 'CRUDController@updateActivitySleep');
+
 Route::post('todolist/activity', 'CRUDController@updateActivity');
 
 Route::post('todolist/reminder', 'CRUDController@setReminder');
@@ -116,7 +118,10 @@ Route::get('calories/{jenis}/{title}/{id}', [
 
 Route::post('/calories/category/add', 'CRUDController@addCategoryCalories');
 
-Route::get('/scoreboard', 'CRUDController@viewScoreboard');
+// Route::get('/scoreboard', 'CRUDController@viewScoreboard');
+Route::get('/scoreboard', ['as' => 'scoreboard', 'uses' => 'CRUDController@viewScoreboard']);
+
+Route::get('/goals', ['as' => 'goals', 'uses' => 'CRUDController@viewGoals']);
 
 Route::get('/scoreboard/{category}', 'CRUDController@viewScoreboard');
 
@@ -155,15 +160,13 @@ Route::post('/menu/add-plan', 'CRUDController@insertToDoList');
 
 Route::get('/menu/food/{jenis}', 'CRUDController@viewMenu');
 
-Route::get('/goals', 'CRUDController@viewGoals');
+Route::get('/goals', ['as' => 'goals', 'uses' => 'CRUDController@viewGoals']);
 
-Route::get('/steps', 'CRUDController@viewSteps');
-
-Route::post('/steps', 'CRUDController@readSteps');
+Route::get('/steps', ['as' => 'steps', 'uses' => 'CRUDController@viewSteps']);
 
 Route::get('/steps/{date}', [
 	'uses' => 'CRUDController@stepMore',
-	'as' => 'steps'
+	'as' => 'steps/more'
 ]);
 
 Route::get('/online', 'CRUDController@viewOnline');
@@ -175,3 +178,5 @@ Route::get('/profile', 'CRUDController@viewProfile');
 Route::post('/profile/{edit}', 'CRUDController@editProfile');
 
 Route::get('/logout', 'CRUDController@logout');
+
+Route::post('/mobile/login', 'MobileController@login');

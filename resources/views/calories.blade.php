@@ -10,6 +10,10 @@
 	.right{
 		float: right;
 	}
+	body{
+		background: url("../../images/bg1.jpg") no-repeat center;
+	    background-size: cover;
+	}
 	</style>
 
 </head>
@@ -20,6 +24,7 @@
 @else
 	@include('navbar/navbar_2')
 @endif
+
 <div class="container">
 	@if (Session::has('success'))
 		<div class="alert alert-success">{{ Session::get('success') }}</div>

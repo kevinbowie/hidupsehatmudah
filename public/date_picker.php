@@ -14,9 +14,13 @@ $ttlOther = array();
 $ttlOther[0] = 0;
 $ttlOther[1] = 0;
 $ttlOther[2] = 0;
+$sleep = "";
+$wakeup = "";
 $kategori = array("Sarapan", "Makan Siang", "Makan Malam", "Olahraga", "Minum", "Tidur");
 $sukses = "";
 $msg = "";
+
+sleephistory($date, $userId);
 
 $ssql = "select category_id, category, id, remind, time from to_do_list where date = '" . $date . "' 
 		and user_id = " . $userId . " order by category_id;";
@@ -41,7 +45,7 @@ if ($result->num_rows > 0){
 					<th class="col-sm-1.5 text-right">Lemak</th>
 					<th class="col-sm-1.5 text-right">Protein</th>
 					<th class="col-sm-1.5 text-right">Kalori</th>
-					<th class="col-sm-1.5 text-center">Porsi</th>
+					<th class="col-sm-1.5 text-center">Satuan</th>
 					<th class="col-sm-1 text-center">Aksi</th>
 				</tr> <?php
 
@@ -77,7 +81,7 @@ if ($result->num_rows > 0){
 						SARAN
 					</td>
 				</tr>";
-			food_recommended($userCal, $date, $index-1, $data['id']);
+			food_recommended($userCal, $date, $index-1, $data['id'], $userId);
 		}
 		else if ($data['category_id'] > 3){
 			echo "<td></td><td></td><td></td>";
@@ -100,7 +104,7 @@ if ($result->num_rows > 0){
 							SARAN
 						</td>
 					</tr>
-					<tr class='detail'>
+					<tr class='sgthdr'>
 						<td style='padding-left: 50px;'>BERJALAN</td>
 						<td></td><td></td><td colspan='2'></td>
 						<td>300 Kal</td>
@@ -110,103 +114,110 @@ if ($result->num_rows > 0){
 					<tr class='head'></tr>";
 					grandTotal($date, $userId);
 					break;
-				default:
+				case 5:
 					echo "<td class='text-center'><button class='btn btn-default btn-xs edit-act' data-toggle='modal' data-target='#act-modal' data-list='" . $data['id'] . "' data-kategori='" . $data['category_id'] . "'>UBAH</button></td>
+					</tr>";
+					break;
+				default:
+					echo "<td class='text-center'><button class='btn btn-default btn-xs edit-act' data-toggle='modal' data-target='#sleep-modal' data-list='" . $data['id'] . "' data-kategori='" . $data['category_id'] . "'>UBAH</button></td>
 					</tr>";
 					break;
 			}
 		}
 	}
+	echo "</table>
+	</div><br>";
+	cekTercapai($userCal, $userCarb, $userPro, $userLip, $ttlCarb, $ttlLip, $ttlPro, $ttlOther);
 } 
 else
-	echo "<h3 class='text-center'>Tidak Ada Data</h3>";
-mysqli_close($connection->myconn); ?>
-			</table>
-		</div>
-		<?php
-		cekCompleted($date, $userId);
-		echo "<div class='well'>
-			<p>Kalori : " . $userCal . " Kalori</p>
-			<p>Karbohidrat : " . $userCarb . " Kalori"; 
-				if (($userCarb - $ttlCarb >= -100) && ($userCarb - $ttlCarb <= 200)){
-					echo " (Tercapai)";
-				}
-				else {
-					echo " (Belum Tercapai)"; 
-					$msg = "Coba lebih perhatikan konsumsi karbohidrat";
-				}
-		echo "</p>
-			<p>Lemak : " . $userLip . " Kalori";
-				if (($ttlLip >= 100) && ($userLip - $ttlLip >= -100)){
-					echo " (Tercapai)";
-				}
-				else {
-					echo " (Belum Tercapai)"; 
-					if ($msg != "")
-						$msg = $msg . ", Lemak"; 
-					else 
-						$msg = "Coba lebih perhatikan konsumsi lemak"; 
-				}
-		echo "</p>
-			<p>Protein : " . $userPro . " Kalori"; 
-				if (($userPro - $ttlPro >= -100) && ($userPro - $ttlPro <= 100)){
-					echo " (Tercapai)";
-				}
-				else {
-					echo " (Belum Tercapai)"; 
-					if ($msg != "")
-						$msg = $msg . ", Protein"; 
-					else 
-						$msg = "Coba lebih perhatikan konsumsi lemak protein"; 
-				}
-		echo "</p>
-			<p>Olahraga";
-				if ($ttlOther[0] >= 0.5){
-					echo " (Tercapai)";
-				}
-				else {
-					echo " (Belum Tercapai)"; 
-					if ($msg != "")
-						$msg = $msg . "<br>Berolahragalah setiap hari minimal setengah jam (untuk aktivitas ringan) !"; 
-					else 
-						$msg = "Berolahragalah setiap hari minimal setengah jam (untuk aktivitas ringan) !"; 
-				}
-		echo "</p>
-			<p>Drink";
-				if ($ttlOther[1] >= 2){
-					echo " (Tercapai)";
-				}
-				else {
-					echo " (Belum Tercapai)"; 
-					if ($msg != "")
-						$msg = $msg . "<br>Minumlah minimal 2 Liter air setiap hari !"; 
-					else 
-						$msg = "Minumlah minimal 2 Liter air setiap hari !"; 
-				}
-		echo "</p>
-			<p>Sleep";
-				if ($ttlOther[2] >= 6 && $ttlOther[2] <= 9){
-					echo " (Tercapai)";
-				}
-				else {
-					echo " (Belum Tercapai)"; 
-					if ($msg != "")
-						$msg = $msg . "<br>Beristirahatlah minimal 6 - 9 jam setiap hari !"; 
-					else 
-						$msg = "Beristirahatlah minimal 6 - 9 jam setiap hari !"; 
-				}
-		echo "</p>
-			<div class='text-center'>";
-				if ($msg != "")
-					echo $msg;
-				else
-					echo "Selamat! Anda berhasil mencapai gaya hidup sehat hari ini !";
-		echo "</div>
-		</div>"; ?>
-		<br>
-	</div> 
+	echo "<h3 class='text-center'>Tidak Ada Data</h3>
+		</table>
+	</div>";
+mysqli_close($connection->myconn);
 
-<?php
+function cekTercapai($userCal, $userCarb, $userPro, $userLip, $ttlCarb, $ttlLip, $ttlPro, $ttlOther){
+	$msg = "";
+	echo "<div class='well'>
+		<p>Kalori Masuk : " . $userCal . " Kalori</p>
+		<p>Karbohidrat : " . $userCarb . " Kalori"; 
+			if (($userCarb - $ttlCarb >= -100) && ($userCarb - $ttlCarb <= 200)){
+				echo " (Tercapai)";
+			}
+			else {
+				echo " (Belum Tercapai)"; 
+				$msg = "Coba lebih perhatikan konsumsi karbohidrat";
+			}
+	echo "</p>
+		<p>Lemak : " . $userLip . " Kalori";
+			if (($ttlLip >= 100) && ($userLip - $ttlLip >= -100)){
+				echo " (Tercapai)";
+			}
+			else {
+				echo " (Belum Tercapai)"; 
+				if ($msg != "")
+					$msg = $msg . ", Lemak"; 
+				else 
+					$msg = "Coba lebih perhatikan konsumsi lemak"; 
+			}
+	echo "</p>
+		<p>Protein : " . $userPro . " Kalori"; 
+			if (($userPro - $ttlPro >= -100) && ($userPro - $ttlPro <= 100)){
+				echo " (Tercapai)";
+			}
+			else {
+				echo " (Belum Tercapai)"; 
+				if ($msg != "")
+					$msg = $msg . ", Protein"; 
+				else 
+					$msg = "Coba lebih perhatikan konsumsi protein"; 
+			}
+	echo "</p>
+		<p>Olahraga";
+			if ($ttlOther[0] >= 0.5){
+				echo " (Tercapai)";
+			}
+			else {
+				echo " (Belum Tercapai)"; 
+				if ($msg != "")
+					$msg = $msg . "<br>Berolahragalah setiap hari minimal setengah jam (untuk aktivitas ringan) !"; 
+				else 
+					$msg = "Berolahragalah setiap hari minimal setengah jam (untuk aktivitas ringan) !"; 
+			}
+	echo "</p>
+		<p>Drink";
+			if ($ttlOther[1] >= 2){
+				echo " (Tercapai)";
+			}
+			else {
+				echo " (Belum Tercapai)"; 
+				if ($msg != "")
+					$msg = $msg . "<br>Minumlah minimal 2 Liter air setiap hari !"; 
+				else 
+					$msg = "Minumlah minimal 2 Liter air setiap hari !"; 
+			}
+	echo "</p>
+		<p>Sleep";
+			if ($ttlOther[2] >= 6 && $ttlOther[2] <= 9){
+				echo " (Tercapai)";
+			}
+			else {
+				echo " (Belum Tercapai)"; 
+				if ($msg != "")
+					$msg = $msg . "<br>Beristirahatlah minimal 6 - 9 jam setiap hari !"; 
+				else 
+					$msg = "Beristirahatlah minimal 6 - 9 jam setiap hari !"; 
+			}
+	echo "</p>
+		<div class='text-center'>";
+			if ($msg != "")
+				echo $msg;
+			else
+				echo "Selamat! Anda berhasil mencapai gaya hidup sehat hari ini !";
+	echo "</div>
+	</div>
+	<br>
+	</div>";
+}
 function getDetails($userId, $date, $categoryId, $id){
 	$connection = new createConn();
 	$connection->connect();
@@ -220,11 +231,11 @@ function getDetails($userId, $date, $categoryId, $id){
 		if ($id == 1){
 			echo "<tr class='detail'>
 				<td colspan='2' style='padding-left: 50px;'>" . $dtl['cal_title'] . "</td>
-				<td>" . $dtl['carbohydrate'] . "</td>
-				<td>" . $dtl['fat'] . "</td>
-				<td>" . $dtl['protein'] . "</td>
-				<td>" . $dtl['calories'] . "</td>
-				<td>" . $dtl['portion'] . " " . $dtl['satuan'] . "</td>
+				<td>" . round($dtl['carbohydrate']) . "</td>
+				<td>" . round($dtl['fat']) . "</td>
+				<td>" . round($dtl['protein']) . "</td>
+				<td>" . round($dtl['calories']) . "</td>
+				<td>" . number_format($dtl['portion'], 1, ".", "") . " " . $dtl['satuan'] . "</td>
 				<td class='text-center'>
 					<button class='btn btn-default btn-xs delete' data-list='" . $dtl['id'] . "'>
 					<i class='glyphicon glyphicon-remove'></i>
@@ -247,14 +258,14 @@ function getDetails($userId, $date, $categoryId, $id){
 	mysqli_close($connection->myconn); 
 }
 
-function food_recommended($UCalories, $date, $index, $listId){
+function food_recommended($UCalories, $date, $index, $listId, $userId){
 	$connection = new createConn();
 	$caloriePortion = $UCalories / 3;
 	$i = 1;
 	$count = 1;
 	$ssql = "SELECT a.id, a.gram, a.carbohydrate, a.protein, a.fat, a.cal_title as title, a.calories, a.cal_id, a.portion, c.satuan
 			 FROM recommended a inner join to_do_list b on a.list_id = b.id inner join satuan c on c.id = a.unit_id
-			 where b.date = '" . $date . "' and b.category_id = " . $index . " order by a.id;";
+			 where b.date = '" . $date . "' and b.category_id = " . $index . " and user_id = '". $userId . "' order by a.id;";
 	$connection->connect();
 	$result = mysqli_query($connection->myconn, $ssql);
 	if ($result->num_rows > 0){
@@ -265,21 +276,40 @@ function food_recommended($UCalories, $date, $index, $listId){
 						<a class='btn btn-default btn-xs choose' href='todolist/rekom/".$listId."/".$dtl['id']."'>Pilih</a>
 						 SARAN KE- " . $i . "</td>
 				</tr>";
+				$total = array(0, 0, 0, 0);
 				$i++;
 			}
 			echo "<tr class='detailsgt'>
 				<td colspan='2' style='padding-left: 50px;'>" . $dtl['title'] . "</td>
-				<td class='text-right'>" . $dtl['carbohydrate'] . "</td>
-				<td class='text-right'>" . $dtl['fat'] . "</td>
-				<td class='text-right'>" . $dtl['protein'] . "</td>
-				<td class='text-right'>" . $dtl['calories'] . "</td>
-				<td class='text-center'>" . $dtl['portion'] . " " . $dtl['satuan'] . "</td>
+				<td class='text-right'>" . round($dtl['carbohydrate']) . "</td>
+				<td class='text-right'>" . round($dtl['fat']) . "</td>
+				<td class='text-right'>" . round($dtl['protein']) . "</td>
+				<td class='text-right'>" . round($dtl['calories']) . "</td>
+				<td class='text-center'>" .  number_format($dtl['portion'], 1, ".", "") . " " . $dtl['satuan'] . "</td>
 				<td></td>
 			</tr>";
-			if ($count == 5)
+			if ($count == 5){
+				$total[0] += round($dtl['carbohydrate']);
+				$total[1] += round($dtl['fat']);
+				$total[2] += round($dtl['protein']);
+				$total[3] += round($dtl['calories']);
+				echo "<tr class='totalsgt'>
+					<td colspan='2' style='padding-left: 50px;'><b>TOTAL</b></td>
+					<td class='text-right'><b>".$total[0]."</b></td>
+					<td class='text-right'><b>".$total[1]."</b></td>
+					<td class='text-right'><b>".$total[2]."</b></td>
+					<td class='text-right'><b>".$total[3]."</b></td>
+					<td colspan='2'></td>
+				</tr>";
 				$count = 1;
-			else
+			}
+			else{
+				$total[0] += round($dtl['carbohydrate']);
+				$total[1] += round($dtl['fat']);
+				$total[2] += round($dtl['protein']);
+				$total[3] += round($dtl['calories']);
 				$count++;
+			}
 		}
 	}
 	mysqli_close($connection->myconn); 
@@ -297,15 +327,15 @@ function setTotal($listId){
 	$totalPro = 0;
 	if ($result->num_rows > 0){
 		$dtl=mysqli_fetch_array($result);
-		echo "<td>" . $dtl['carb'] . "</td>
-			<td>" . $dtl['fat'] . "</td>
-			<td>" . $dtl['protein'] . "</td>
-			<td>" . ($dtl['carb'] + $dtl['fat'] + $dtl['protein']) . "</td>
+		echo "<td>" . round($dtl['carb']) . "</td>
+			<td>" . round($dtl['fat']) . "</td>
+			<td>" . round($dtl['protein']) . "</td>
+			<td>" . (round($dtl['carb']) + round($dtl['fat']) + round($dtl['protein'])) . "</td>
 			<td></td>";
 		$totalCal += $dtl['carb'] + $dtl['fat'] + $dtl['protein'];
-		$totalCarb += $dtl['carb'];
-		$totalLip += $dtl['fat'];
-		$totalPro += $dtl['protein'];
+		$totalCarb += round($dtl['carb']);
+		$totalLip += round($dtl['fat']);
+		$totalPro += round($dtl['protein']);
 	}
 	else{
 		echo "<td>0</td><td>0</td><td>0</td><td>0</td><td></td>";
@@ -324,7 +354,7 @@ function setTotal1($listId, $catId){
 		switch ($catId) {
 			case 4:
 				$GLOBALS['ttlOther'][0] = $dtl['portion'];
-				echo "<td>" . $dtl['calorie'] . "</td>
+				echo "<td>" . round($dtl['calorie']) . "</td>
 					<td>" . $dtl['portion'] . " Jam</td>";
 				break;
 			case 5:
@@ -358,10 +388,10 @@ function grandTotal($date, $userId){
 	$result = mysqli_query($connection->myconn, $ssql);
 	if ($result->num_rows > 0){
 		$dtl=mysqli_fetch_array($result);
-		$GLOBALS['ttlCarb'] = $dtl['carb'];
-		$GLOBALS['ttlLip'] = $dtl['fat'];
-		$GLOBALS['ttlPro'] = $dtl['protein'];
-		$GLOBALS['ttlCal'] = $dtl['cal'];
+		$GLOBALS['ttlCarb'] = round($dtl['carb']);
+		$GLOBALS['ttlLip'] = round($dtl['fat']);
+		$GLOBALS['ttlPro'] = round($dtl['protein']);
+		$GLOBALS['ttlCal'] = round($dtl['cal']);
 
 		echo "<tr class='total info'>
 			<th></th>
@@ -384,47 +414,6 @@ function grandTotal($date, $userId){
 	mysqli_close($connection->myconn);
 } 
 
-function cekCompleted($tanggal, $userId){
-	$connection = new createConn();
-	$ssql = "SELECT sum(completed) as completed from to_do_list
-			WHERE date = '" . $tanggal . "' and user_id = " . $userId . "
-			GROUP BY user_id, date;";
-	$connection->connect();
-	$result = mysqli_query($connection->myconn, $ssql);
-	if ($result->num_rows > 0){
-		$dtl=mysqli_fetch_array($result);
-		if ($dtl['completed'] == 0)
-			echo "<div>
-			<form method='post' action='todolist/finish/".$tanggal."'>
-				<input type='hidden' name='protein' value='".$GLOBALS['ttlPro']."'>
-				<input type='hidden' name='carbohydrate' value='".$GLOBALS['ttlCarb']."'>
-				<input type='hidden' name='lipid' value='".$GLOBALS['ttlLip']."'>
-				<input type='hidden' name='calories' value='".$GLOBALS['ttlCal']."'>
-				<input type='hidden' name='exercise' value='".$GLOBALS['ttlOther'][0]."'>
-				<input type='hidden' name='drink' value='".$GLOBALS['ttlOther'][1]."'>
-				<input type='hidden' name='sleep' value='".$GLOBALS['ttlOther'][2]."'>
-				<button type='submit' id='finish'>Klik jika agenda kegiatan sudah selesai dilaksanakan</button>
-			</form></div>";
-		else{
-			echo "<p>Sudah Selesai</p>";
-		}
-	}
-	else{
-		echo "<div>
-			<form method='post' action='todolist/finish/".$tanggal."'>
-				<input type='hidden' name='protein' value='".$GLOBALS['ttlPro']."'>
-				<input type='hidden' name='carbohydrate' value='".$GLOBALS['ttlCarb']."'>
-				<input type='hidden' name='lipid' value='".$GLOBALS['ttlLip']."'>
-				<input type='hidden' name='calories' value='".$GLOBALS['ttlCal']."'>
-				<input type='hidden' name='exercise' value='".$GLOBALS['ttlOther'][0]."'>
-				<input type='hidden' name='drink' value='".$GLOBALS['ttlOther'][1]."'>
-				<input type='hidden' name='sleep' value='".$GLOBALS['ttlOther'][2]."'>
-				<button type='submit' id='finish' value='Klik jika agenda kegiatan sudah selesai dilaksanakan'
-			</form></div>";
-	}
-	mysqli_close($connection->myconn);
-}
-
 function weight($tanggal, $userId, $userCal, $userPro, $userLip, $userCarb){
 	$connection = new createConn();
 	$ssql = "SELECT weight, round(protein_goal/3) as pro, round(carbohydrate_goal/3) as carb, round(fat_goal/3) as fat, 
@@ -437,33 +426,57 @@ function weight($tanggal, $userId, $userCal, $userPro, $userLip, $userCarb){
 		echo "<div>
 			<p>Berat anda adalah : " . $dtl['weight'] . " kg";
 			if ($dtl['weight'] < $dtl['weight_goal'])
-				echo " (Perlu diidealkan/dinaikkan menjadi " . $dtl['weight_goal'] . " kg)";
+				echo " (Perlu dinaikkan menjadi " . $dtl['weight_goal'] . " kg)";
 			else if ($dtl['weight'] > $dtl['weight_goal'])
-				echo " Perlu diidealkan/diturunkan menjadi " . $dtl['weight_goal'] . " kg)";
+				echo " (Perlu diturunkan menjadi " . $dtl['weight_goal'] . " kg)";
 		echo "</p>
 			<p>Kebutuhan kalori anda dalam satu porsi makan : </p>
 			<p>Kalori : " . $dtl['cal'] . " kal</p>
 			<p>Protein : " . $dtl['pro'] . " kal</p>
 			<p>Karbohidrat : " . $dtl['carb'] . " kal</p>
 			<p>Lemak : " . $dtl['fat'] . " kal</p>
-			<a href='todolist/reset/".$tanggal."' data-toggle='modal' class='weight'>Klik untuk reset semua</a><br>
+			<a href='todolist/reset/".$tanggal."' data-toggle='modal' class='weight'>Reset semua</a><br>
 			<a href='todolist/suggest/".$tanggal."'>Buat Daftar Rekomendasi Makanan</a></div>";
 	}
 	else{
-		echo "<div><a href='#weight-modal' data-toggle='modal' class='weight'>Klik untuk tentukan berat badan anda hari ini</a></div>";
+		echo "<div><a href='#weight-modal' data-toggle='modal' class='weight'>Tentukan berat badan anda hari ini</a></div>";
 	}
 	mysqli_close($connection->myconn);	
 }
 
+function sleephistory($tanggal, $userId){
+	$connection = new createConn();
+	$ssql ="select wakeup_time, sleep_time from history where date = '" . $tanggal . "' and user_id = '" . $userId . "'";
+	$connection->connect();
+	$result = mysqli_query($connection->myconn, $ssql);
+	$data = mysqli_fetch_array($result);
+	if (! is_null($data['sleep_time']))
+		$GLOBALS['sleep'] = $data['sleep_time'];
+	if (! is_null($data['wakeup_time']))
+		$GLOBALS['wakeup'] = $data['wakeup_time'];
+	mysqli_close($connection->myconn);
+}
 ?>
 
 <script type="text/javascript">
 $(document).ready(function() {
-	$('.detail').hide();
-	$('.suggest').hide();
-	$('.plan').hide();
+	for(i=0;i<4;i++){
+		if(! $('tr.head:eq('+i+')').next('tr.plan').next('tr.detail').length > 0){
+			$('tr.head:eq('+i+')').next('tr.plan').hide();
+			$('tr.head:eq('+i+')').next('tr.plan').next('.detail').hide();
+	    	$('tr.head:eq('+i+')').nextUntil('tr.suggest').next('tr.suggest').hide();
+		}
+		else{
+	    	$('tr.head:eq('+i+')').nextUntil('tr.suggest').show();
+	    	$('tr.head:eq('+i+')').nextUntil('tr.suggest').next('tr.suggest').show();
+			$('tr.head:eq('+i+')').next('tr.plan').find('i').toggleClass('glyphicon-plus').toggleClass('glyphicon-minus');
+			$('tr.head:eq('+i+')').find('i').toggleClass('glyphicon-plus').toggleClass('glyphicon-minus');
+		}
+	}
+
 	$('.sgthdr').hide();
 	$('.detailsgt').hide();
+	$('.totalsgt').hide();
 	$('tr.head').find('td:eq(0)').css("text-align", "center");
 	$('tr.head').find('td:eq(1)').css("text-align", "right");
 	$('tr.head').find('td:eq(2)').css("text-align", "right");
@@ -504,11 +517,16 @@ $(document).ready(function() {
 	});
 
 	$('a.toggle-suggest').click(function(){
-		$(this).parents('tr.suggest').nextUntil('tr.head').slideToggle(100);
-	    $(this).parents('tr.suggest').next('tr.head').slideToggle(100);
-	    $(this).find('i').toggleClass('glyphicon-plus').toggleClass('glyphicon-minus');
-	    if ($(this).parents('tr.suggest').nextUntil('tr.sgthdr').find('i').hasClass('glyphicon-minus'))
-				$(this).parents('tr.suggest').nextUntil('tr.sgthdr').find('i').toggleClass('glyphicon-minus').toggleClass('glyphicon-plus');	
+	    if ($(this).parents('tr.suggest').next('tr.sgthdr').length > 0){
+			$(this).parents('tr.suggest').nextUntil('tr.head').slideToggle(100);
+		    $(this).parents('tr.suggest').next('tr.head').slideToggle(100);
+		}
+		else{
+			alert("Anda belum membuat daftar rekomendasi makanan !");
+		}
+		$(this).find('i').toggleClass('glyphicon-plus').toggleClass('glyphicon-minus');
+		if ($(this).parents('tr.suggest').nextUntil('tr.sgthdr').find('i').hasClass('glyphicon-minus'))
+			$(this).parents('tr.suggest').nextUntil('tr.sgthdr').find('i').toggleClass('glyphicon-minus').toggleClass('glyphicon-plus');
 	});
 
 	$('a.choose').click(function(){
@@ -562,14 +580,32 @@ $(document).ready(function() {
 			var portion;
 			var date = new Date();
 			date = "<?php echo $date; ?>";
-			if (id == 5){
-				category = "minum";
-				portion = $("#drink").val();
-			}
-			else{
-				category = "tidur";
-				portion = $("#sleep").val();
-			}
+			category = "minum";
+			portion = $("#drink").val();
+			$(e.currentTarget).find('.page-header').children('h2').text("Liter Minum");
+			$(e.currentTarget).find('#porsi').children('label').text("Liter");
+			$(e.currentTarget).find('input[name="catId"]').val(id);
+			$(e.currentTarget).find('input[name="listId"]').val(listId);
+			$(e.currentTarget).find('input[name="date"]').val(date);
+			$(e.currentTarget).find('input[name="category"]').val(category);
+			$(e.currentTarget).find('input[name="portion"]').val(portion);
+		});
+		$("#sleep-modal").on('show.bs.modal', function(e) {
+			var id = $(e.relatedTarget).data('kategori');
+			var listId = $(e.relatedTarget).data('list');
+			var category;
+			var portion;
+			var sleep = "<?php echo $sleep; ?>";
+			var wakeup = "<?php echo $wakeup; ?>";
+			var date = new Date();
+			date = "<?php echo $date; ?>";
+			if (sleep == "")
+				category = "Tidur";
+			else
+				category = "Bangun";
+			portion = $("#sleep").val();
+			$(e.currentTarget).find('.page-header').children('h2').text("Jam " + category);
+			$(e.currentTarget).find('#porsi').children('label').text("Waktu");
 			$(e.currentTarget).find('input[name="catId"]').val(id);
 			$(e.currentTarget).find('input[name="listId"]').val(listId);
 			$(e.currentTarget).find('input[name="date"]').val(date);
@@ -584,14 +620,10 @@ $(document).ready(function() {
 			var date = new Date();
 			var reminder;
 			reminder = $(e.relatedTarget).text();
-			if (reminder == "(Set Reminder)")
-				reminder = "7:00:00";
-			else if (reminder.length == 8)
-				reminder = reminder.substr(1, 8);
 			date = "<?php echo $date; ?>";
 			$(e.currentTarget).find('input[name="catId"]').val(id);
 			$(e.currentTarget).find('input[name="date"]').val(date);
-			$(e.currentTarget).find('input[name="reminder"]').val(reminder);
+			$(e.currentTarget).find('input[name="reminder"]').val("00:00:00");
 		});
 	});
 

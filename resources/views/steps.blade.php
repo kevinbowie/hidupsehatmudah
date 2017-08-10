@@ -1,3 +1,14 @@
+<?php 
+if (isset($_GET['month']) && isset($_GET['year'])){
+    $bln = $_GET['month'];
+    $thn = $_GET['year'];
+}
+else{
+    $bln = date("m");
+    $thn = date("Y");
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -92,27 +103,27 @@
 </head>
 <body data-spy="scroll" data-target=".navbar" data-offset="50">
 @include('navbar/navbar_2')
-<h2 class="text-center">STEP RECORDS</h2>  
+<h2 class="text-center">CATATAN MELANGKAH</h2>  
 <div class="container"> 
-	<form method="post" onSubmit="return validateForm()">
-		<div class="col-sm-6">
-			<div class="row">
-			  	<div class="col-sm-3 form-group">
-					<label>Year</label>
-					<div class="form-group">
-			        	<input type="text" name="year" value="" class="form-control input-small">
-				    </div>
-				</div>
-				<div class="col-sm-3 form-group">
-					<label>Month</label>
-					<div class="form-group">
-			        	<input type="text" name="month" value="" class="form-control input-small">
-				    </div>
-				</div>	
-				<div style="margin-top: 33px;"><button class="btn btn-primary" id="submit" type="submit">Refresh</button></div>
-			</div>	
-		</div>
-	</form>
+	<form method="get" onSubmit="return validateForm()" action="<?php route('steps'); ?>">
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-3 form-group">
+                            <label>Tahun</label>
+                            <div class="form-group">
+                                <input type="text" name="year" value="<?php echo $thn; ?>" class="form-control input-small">
+                            </div>
+                        </div>
+                        <div class="col-sm-3 form-group">
+                            <label>Bulan</label>
+                            <div class="form-group">
+                                <input type="text" name="month" value="<?php echo $bln; ?>" class="form-control input-small">
+                            </div>
+                        </div>  
+                        <div style="margin-top: 32px;"><button class="btn btn-primary" id="submit" type="submit">Refresh</button></div>
+                    </div>  
+                </div>
+            </form>
   	<table class="table table-hover">
     <tbody>
     	<?php $i = 1; $k = 0;
@@ -122,20 +133,20 @@
 		$timediff = $time1->diff($time2)->format("%h:%i:%s");
     	echo "<tr>
 	        <td class='fit'><img src='#'><p>" . Auth::user()->first_name . " " . Auth::user()->last_name . "</p>
-	        	<a href='" . route('steps', ['date'=>$userDtl[$j]->date]) . "' class='more'>See More...</a>
+	        	<a href='" . route('steps/more', ['date'=>$userDtl[$j]->date]) . "' class='more'>Lanjut...</a>
 	        </td>
 	        <td class='fit'>
 				<ul class='list-unstyled'>
-					<li>Ditance : " . $userDtl[$j]->distance . "</li>
-					<li>Start : " . $userDtl[$j]->start . "</li>
-					<li>End : " . $userDtl[$j]->end . "</li>
+					<li>Jarak : " . $userDtl[$j]->distance . "</li>
+					<li>Mulai : " . $userDtl[$j]->start . "</li>
+					<li>Selesai : " . $userDtl[$j]->end . "</li>
 				</ul>  
 	        </td>
 	        <td class='fit'>
 	        	<ul class='list-unstyled'>
-	        		<li>Goal : " . $userDtl[$j]->goal . "</li>
-	        		<li>Time : " . $timediff . "</li>
-	        		<li>Date : " . $userDtl[$j]->date . "</li>
+	        		<li>Target : " . $userDtl[$j]->goal . "</li>
+	        		<li>Waktu : " . $timediff . "</li>
+	        		<li>Tanggal : " . $userDtl[$j]->date . "</li>
 	        	</ul>
 	        </td>
 	        <td class='col-sm-1'></td>
@@ -144,9 +155,9 @@
         			<thead>
 			    		<tr>
 				        	<th width='10%' style='text-align:center;'>No</th>
-				        	<th width='20%' style='text-align:center;'>Name</th>
-				        	<th width='15%' style='word-wrap: break-word; text-align:center;'>Distance (km)</th>
-				        	<th width='15%' style='text-align:center;'>Time</th>
+				        	<th width='20%' style='text-align:center;'>Nama</th>
+				        	<th width='15%' style='word-wrap: break-word; text-align:center;'>Jarak (km)</th>
+				        	<th width='15%' style='text-align:center;'>Waktu</th>
 				      	</tr>
 			    	</thead>
 			    	<tbody>";
@@ -204,7 +215,6 @@ function validateForm(){
 		alert('Format Bulan Tidak Tepat !');
 	else 
 		flag = true;
-	$('form').attr('action', {{ action('CRUDController@readSteps') }});
 	return flag;
 }
 </script>

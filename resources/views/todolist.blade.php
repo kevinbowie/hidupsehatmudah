@@ -43,13 +43,33 @@
 		    border: 1px solid blue; 
 		    padding-left: 20px;
 		}
+		body{
+			background: url("images/bg1.jpg") no-repeat center;
+		    background-size: cover;
+		}
+		.well{
+			background: #ddd;
+		}
+		table{
+			background-color: #eee;
+		}
+		.sgthdr{
+			border-top: 2px solid black;
+			border-bottom: 2px solid black;
+		}
+		.totalsgt{
+			border-bottom: 2px solid black;
+		}
 	</style>
 </head>
 <body>
 @include ('navbar/navbar_2')
 @include ('dbconfig')
-@include ('add_list')
+@include ('addlist')
 <div class="container">
+	@if (Session::has('success'))
+		<div class="alert alert-success">{{ Session::get('success') }}</div>
+	@endif
 	<div class='page-header'><h2 class='text-center'>AGENDA KEGIATAN</h2></div>
 	<div class="row">
 		<div class="col-sm-3">

@@ -10,6 +10,10 @@
 	.right{
 		float: right;
 	}
+	body{
+		background: url("../../../images/bg1.jpg") no-repeat center;
+	    background-size: cover;
+	}
 	</style>
 
 </head>

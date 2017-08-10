@@ -8,16 +8,24 @@
 	<link rel="stylesheet" type="text/css" href="jquery-ui-1.12.1/jquery-ui.css">
     <script type="text/javascript" src="jquery-ui-1.12.1/jquery-ui.js"></script>
     <script type="text/javascript" src="bootstrap/js/bootstrap-birthday.js"></script>
+    <style type="text/css">	
+		body{
+			background: url("images/bg1.jpg") no-repeat center;
+		    background-size: cover;
+		    color: black;
+		}
+    </style>
 </head>
 <body>
 @include ('navbar/navbar_1')
+	<div class="container">
 @include ('login')
 
 @if (Session::has('message'))
 	<div class='alert alert-danger'>{{ Session::get('message') }}</div>
 @endif
 <form method="post" onSubmit="return validateForm()">
-	<div class="col-sm-6">
+	<!-- <div class="col-sm-9"> -->
 		<h1>Tentang Anda</h1>
 		<div class="row">
 			<div class="col-sm-5 form-group">
@@ -81,9 +89,10 @@
 			<div class="col-sm-8 form-group">
 				<label>Tanggal Lahir</label>
 				<div class="form-group">
-			      	<div class="col-lg-11">
+			      	<div class="col-lg-10">
 			        	<input type="text" name="birth" value="" id="row-col"/>
 			        	<input type="hidden" name="birthday" value="">
+			        	<input type="hidden" name="age" class="form-control" readonly>
 			      	</div>
 			    </div>
 				@if (count($errors) > 0)
@@ -92,12 +101,6 @@
 				@endif
 			</div>	
 		</div>		
-		<div class="row">
-			<div class="col-sm-2 form-group">
-				<label>Umur</label>
-				<input type="text" name="age" placeholder="Umur Anda" class="form-control" readonly>
-			</div>	
-		</div>
 		<h1>Lain-Lain</h1>
 		<div class="row">
 			<div class="col-sm-3 form-group">
@@ -155,7 +158,7 @@
 				@endif
 			</div>	
 			<div class="col-sm-3 form-group">
-				<label>Kalori</label>
+				<label id="kal">Kalori</label>
 				<input type="text" name="calories" class="form-control" readonly>
 				@if (count($errors) > 0)
 					<br>
@@ -177,9 +180,9 @@
 				<input type="text" name="carbohydrate" class="form-control" readonly>
 			</div>	
 		</div>	
-	<button type="submit" class="btn btn-lg btn-info">Daftar</button>					
-	</div>
-</form>
+	<button type="submit" class="btn btn-primary">Daftar</button><p></p>				
+	<!-- </div> -->
+</form></div>
 </body>
 </html>
 
@@ -236,7 +239,7 @@ function countBMR(){
     var today = new Date();
     var age = Math.floor((today-date) / (365.25 * 24 * 60 * 60 * 1000));
     var w_ideal = (height-100) * 0.9;
-    var imt = weight/(height*height/10000);
+    var imt = Math.round(weight/(height*height/10000));
     var calories;
 
     if (height > 0 && weight > 0 && aktivitas != 0 && gender != 0 && ! isNaN(age)){
@@ -258,21 +261,28 @@ function countBMR(){
 
 	    calories *= aktivitas;
 
-	    if (weight < w_ideal)
+	    if (weight < w_ideal){
 	    	calories += 500;
-	    else if (weight > w_ideal)
+	    	$('label#kal').text("Kalori (Naikkan Berat Badan)");
+	    }
+	    else if (weight > w_ideal){
 	    	calories -= 500;
-
+	    	$('label#kal').text("Kalori (Turunkan Berat Badan)");
+	    }
+	    calories = Math.round(calories);
+	    var protein = Math.round(calories*0.15);
+	    var lemak = Math.round(calories*0.25);
+	    var karbo = calories - lemak - protein;
 	    $('input[name="age"]').val(age);
 		$('input[name="imt"]').val(imt);
 		$('input[name="ideal"]').val(w_ideal);
 		$('input[name="calories"]').val(calories);
-		$('input[name="protein"]').val(calories*0.15);
-		$('input[name="carbohydrate"]').val(calories*0.6);
-		$('input[name="lipid"]').val(calories*0.25);
+		$('input[name="protein"]').val(protein);
+		$('input[name="carbohydrate"]').val(karbo);
+		$('input[name="lipid"]').val(lemak);
 	}
 	else
-		alert('Harap Diisi Kolom Gender, Height, Weight, Birthday dan Physic Activity !');
+		alert('Harap Diisi Kolom Jenis Kelamin, Tinggi Badan, Berat Badan, Tanggal Lahir dan Aktivitas Fisik !');
 		return false;
 }
 

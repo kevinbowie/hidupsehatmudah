@@ -10,7 +10,9 @@
   <style>
   body {
       font: 400 15px/1.8 Lato, sans-serif;
-      color: #777;
+      color: #333;
+      background: url("images/bg green.jpg") no-repeat center;
+      background-size: cover;
   }
   h3{
       margin: 10px 0 30px 0;
