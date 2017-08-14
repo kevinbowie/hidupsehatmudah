@@ -45,6 +45,9 @@
     background: url("images/bg1.jpg") no-repeat center;
     background-size: cover;
   }
+  .navbar{
+    margin-bottom: auto;
+  }
 	</style>
 </head>
 <body>
@@ -80,60 +83,60 @@
     <!-- Wrapper for slides -->
     <div class="carousel-inner" role="listbox">
       <div class="item active">
-        <img src="images/1.jpeg" alt="New York" width="1000" height="700">
+        <img src="images/1.jpeg" alt="Hidup Sehat" width="1000px" height="700">
         <div class="carousel-caption">
-          <h3>Gaya Hidup Sehat</h3>
+          <h1>Gaya Hidup Sehat</h1>
           <p>Mulai mendapatkan gaya hidup sehat yang lebih baik dan terencana sehingga menjadikannya sebagai kebiasaan hidup, 
 			mulai dari pengaturan pola makan, olahraga, tidur, dan minum</p>
         </div>      
       </div>
 
       <div class="item">
-        <img src="images/1.jpeg" alt="Chicago" width="1000" height="700">
+        <img src="images/1.jpeg" alt="Hidup Sehat" width="1000" height="700">
         <div class="carousel-caption">
-          <h3>Pengaturan Berat Badan</h3>
+          <h1>Pengaturan Berat Badan</h1>
           <p>Mengatur kalori masuk dan kalori keluar sehingga berat badan menjadi terkontrol dan 
 			dapat dimanfaatkan sebagai program menaikkan / menurunkan berat badan</p>
         </div>      
       </div>
     
       <div class="item">
-        <img src="images/1.jpeg" alt="Los Angeles" width="1000" height="700">
+        <img src="images/1.jpeg" alt="Hidup Sehat" width="1000" height="700">
         <div class="carousel-caption">
-          <h3>Scoreboard</h3>
+          <h1>Scoreboard</h1>
           <p>Anda tidak akan bosan dalam mengikuti program ini, karena anda dan user lainnya akan berlomba 
 			memiliki streak (catatan kerutinan) yang terbaik</p>
         </div>      
       </div>
     <div class="item">
-        <img src="images/1.jpeg" alt="Los Angeles" width="1000" height="700">
+        <img src="images/1.jpeg" alt="Hidup Sehat" width="1000" height="700">
         <div class="carousel-caption">
-          <h3>History</h3>
+          <h1>History</h1>
           <p>Anda dapat memantau histori gaya hidup sehat anda sebelumnya</p>
         </div>      
       </div>
 
     <div class="item">
-        <img src="images/1.jpeg" alt="Los Angeles" width="1000" height="700">
+        <img src="images/1.jpeg" alt="Hidup Sehat" width="1000" height="700">
         <div class="carousel-caption">
-          <h3>Daftar Kalori</h3>
+          <h1>Daftar Kalori</h1>
           <p>Daftar kalori makanan dan olahraga disediakan oleh aplikasi dan jika anda memiliki ide 
 			untuk menambahkan daftar kalori maka anda dapat mengajukannya</p>
         </div>      
       </div>
 
     <div class="item">
-        <img src="images/1.jpeg" alt="Los Angeles" width="1000" height="700">
+        <img src="images/1.jpeg" alt="Hidup Sehat" width="1000" height="700">
         <div class="carousel-caption">
-          <h3>Reminder</h3>
+          <h1>Reminder</h1>
           <p>Kami juga menyediakan fitur reminder untuk anda agar perencanaan yang sudah dilakukan bisa terealisasi</p>
         </div>      
       </div>
 
     <div class="item">
-        <img src="images/1.jpeg" alt="Los Angeles" width="1000" height="700">
+        <img src="images/1.jpeg" alt="Hidup Sehat" width="1000" height="700">
         <div class="carousel-caption">
-          <h3>Steps Counter</h3>
+          <h1>Steps Counter</h1>
           <p>Fitur pengukur berlari yang dapat digunakan melalui android</p>
         </div>      
       </div>
@@ -149,15 +152,8 @@
       <span class="sr-only">Next</span>
     </a>
 </div>
-<br><!-- Footer -->
-<footer class="text-center">
-  <div class="collapse navbar-collapse" id="myNavbar">
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="">About Us</a></li>
-        <li><a href="">Privacy Policy</a></li>
-        <li><a href="">Contact Us</a></li>
-      </ul>
-    </div> 
-</footer>
+</div>
+<br>
+@include('navbar/navbar_footer')
 </body>
 </html>

@@ -2,7 +2,7 @@
 <nav class="navbar navbar-inverse">
   	<div class="container-fluid">
     	<div class="navbar-header">
-          <?php echo "<a class='navbar-brand' href='" . url('/') . "'>NamaWebSite</a>"; ?>
+          <?php echo "<a class='navbar-brand' href='" . url('/') . "'>Hidup Sehat Mudah</a>"; ?>
     	</div><!-- 
     	<ul class="nav navbar-nav">
       		<li><a href="#">Page 1</a></li>
