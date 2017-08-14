@@ -14,15 +14,18 @@ $ttlOther = array();
 $ttlOther[0] = 0;
 $ttlOther[1] = 0;
 $ttlOther[2] = 0;
+$ttlOther[3] = 0;
 $sleep = "";
 $wakeup = "";
-$kategori = array("Sarapan", "Makan Siang", "Makan Malam", "Olahraga", "Minum", "Tidur");
+$kategori = array("Sarapan", "Makan Siang", "Makan Malam", "Olahraga", "Minum", "Tidur", "Bangun");
 $sukses = "";
 $msg = "";
+$complete = false;
 
+cekComplete($date, $userId);
 sleephistory($date, $userId);
 
-$ssql = "select category_id, category, id, remind, time from to_do_list where date = '" . $date . "' 
+$ssql = "select category_id, category, id, remind, time, sleep_wakeup_time from to_do_list where date = '" . $date . "' 
 		and user_id = " . $userId . " order by category_id;";
 $connection = new createConn();
 $connection->connect();
@@ -45,52 +48,68 @@ if ($result->num_rows > 0){
 					<th class="col-sm-1.5 text-right">Lemak</th>
 					<th class="col-sm-1.5 text-right">Protein</th>
 					<th class="col-sm-1.5 text-right">Kalori</th>
-					<th class="col-sm-1.5 text-center">Satuan</th>
+					<th class="col-sm-2 text-center">Satuan</th>
 					<th class="col-sm-1 text-center">Aksi</th>
 				</tr> <?php
 
 	while ($data=mysqli_fetch_array($result)){
 		echo "<tr class='head' data-list='".$data['id']."'>
 				<th>";
-		if ($data['category_id'] <= 4){
+		if ($index <= 4){
 			echo "<a class='btn btn-default btn-xs toggle-head'><i class='glyphicon glyphicon-plus'></i></a> ";
 		}
-			echo $kategori[$data['category_id'] - 1] . "</th>
-			<td>
-			<a href='#reminder-modal' data-toggle='modal' data-kategori='" . $data['id'] . "' class='reminder'>";
-
+		echo $kategori[$index - 1] . "</th>
+		<td>";
+		if (! $GLOBALS['complete']){
+			echo "<a href='#reminder-modal' data-toggle='modal' data-kategori='" . $data['id'] . "' class='reminder'>";
 			if ($data['remind'])
 				echo $data['time'];
 			else
 				echo "(Atur Pengingat)";
+		}
+		else{
+			echo "Tidak ditentukan";
+		}
+
 		echo "</a></td>";
-		if ($data['category_id'] <= 3){
+		if ($index <= 3){
 			setTotal($data['id']);
-			echo "<td class='text-center'><button class='btn btn-default btn-xs add' style='width:60px;' data-target='#add-list-modal' data-list='". $data['id'] ."' data-toggle='modal' data-protein='".$totalPro."' data-carb='".$totalCarb."' data-lip='".$totalLip."' data-cal='".$totalCal."'>TAMBAH</button></td>
-			</tr>
+			echo "<td class='text-center'>";
+
+			if (! $GLOBALS['complete']){
+				echo "<button class='btn btn-default btn-xs edit-detail' data-target='#edit-list-modal' data-toggle='modal' data-list='".$data['id']."'>UBAH</button>
+				<button class='btn btn-default btn-xs add' style='width:60px;' data-target='#add-list-modal' data-list='". $data['id'] ."' data-toggle='modal' data-protein='".$totalPro."' data-carb='".$totalCarb."' data-lip='".$totalLip."' data-cal='".$totalCal."'>TAMBAH</button>";
+			}
+
+			echo "</td></tr>
 			<tr class='plan'>
-				<td colspan='8' style='padding-left: 30px;' class='toggle'>
+				<td colspan='7' style='padding-left: 30px;' class='toggle'>
 					<a class='btn btn-default btn-xs toggle-plan'><i class='glyphicon glyphicon-plus'></i></a> AGENDA ANDA
+				</td>
+				<td class='text-center'>
+					<button class='btn btn-default btn-xs save-detail' data-target='#save-list-modal' data-toggle ='modal' data-list='".$data['id']."'>SIMPAN</button>
 				</td>
 			</tr>";
 			getDetails($userId, $date, $data['category_id'], 1);
-			$index += 1;
 			echo "<tr class='suggest'>
 					<td colspan='8' style='padding-left: 30px;'>
 						<a class='btn btn-default btn-xs toggle-suggest'><i class='glyphicon glyphicon-plus'></i></a> 
 						SARAN
 					</td>
 				</tr>";
-			food_recommended($userCal, $date, $index-1, $data['id'], $userId);
+			food_recommended($userCal, $date, $data['category_id'], $data['id'], $userId);
 		}
-		else if ($data['category_id'] > 3){
+		else if ($index > 3){
 			echo "<td></td><td></td><td></td>";
-			setTotal1($data['id'], $data['category_id']);
-			switch ($data['category_id']) {
+			setTotal1($data['id'], $index);
+			switch ($index) {
 				case 4:
-					echo "<td class='text-center'>
-							<button class='btn btn-default btn-xs add' style='width:60px;' data-target='#exercise-modal' data-list='". $data['id'] ."' data-toggle='modal'>TAMBAH</button>
-						</td>
+					echo "<td class='text-center'>";
+						if (! $GLOBALS['complete']){
+							echo "<button class='btn btn-default btn-xs edit-detail' data-target='#edit-list-modal' data-toggle='modal' data-list='".$data['id']."'>UBAH</button>
+							<button class='btn btn-default btn-xs add' style='width:60px;' data-target='#exercise-modal' data-list='". $data['id'] ."' data-toggle='modal'>TAMBAH</button>";
+						}
+						echo "</td>
 					</tr>
 					<tr class='plan'>
 						<td colspan='8' style='padding-left: 30px;' class='toggle'>
@@ -115,15 +134,24 @@ if ($result->num_rows > 0){
 					grandTotal($date, $userId);
 					break;
 				case 5:
-					echo "<td class='text-center'><button class='btn btn-default btn-xs edit-act' data-toggle='modal' data-target='#act-modal' data-list='" . $data['id'] . "' data-kategori='" . $data['category_id'] . "'>UBAH</button></td>
+					echo "<td class='text-center'>";			
+					if (! $GLOBALS['complete']){
+						echo "<button class='btn btn-default btn-xs edit-act' data-toggle='modal' data-target='#act-modal' data-list='" . $data['id'] . "' data-kategori='" . $data['category_id'] . "'>UBAH</button>";
+					}
+					echo "</td>
 					</tr>";
 					break;
 				default:
-					echo "<td class='text-center'><button class='btn btn-default btn-xs edit-act' data-toggle='modal' data-target='#sleep-modal' data-list='" . $data['id'] . "' data-kategori='" . $data['category_id'] . "'>UBAH</button></td>
+					echo "<td class='text-center'>";
+					if (! $GLOBALS['complete']){
+						echo "<button class='btn btn-default btn-xs edit-act' data-toggle='modal' data-jenis='" . $kategori[$index - 1] . "' data-target='#sleep-modal' data-list='" . $data['id'] . "' data-kategori='" . $data['category_id'] . "'>UBAH</button>";
+					}
+					echo "</td></tr>
 					</tr>";
 					break;
 			}
 		}
+		$index++;
 	}
 	echo "</table>
 	</div><br>";
@@ -184,7 +212,7 @@ function cekTercapai($userCal, $userCarb, $userPro, $userLip, $ttlCarb, $ttlLip,
 					$msg = "Berolahragalah setiap hari minimal setengah jam (untuk aktivitas ringan) !"; 
 			}
 	echo "</p>
-		<p>Drink";
+		<p>Minum";
 			if ($ttlOther[1] >= 2){
 				echo " (Tercapai)";
 			}
@@ -196,8 +224,11 @@ function cekTercapai($userCal, $userCarb, $userPro, $userLip, $ttlCarb, $ttlLip,
 					$msg = "Minumlah minimal 2 Liter air setiap hari !"; 
 			}
 	echo "</p>
-		<p>Sleep";
-			if ($ttlOther[2] >= 6 && $ttlOther[2] <= 9){
+		<p>Tidur";
+			$date1 = date_create($ttlOther[2]);
+			$date2 = date_create($ttlOther[3]);
+			$diff = date_diff($date1, $date2);
+			if ($diff->format("%h") >= 6 && $diff->format("%h") <= 9){
 				echo " (Tercapai)";
 			}
 			else {
@@ -218,17 +249,18 @@ function cekTercapai($userCal, $userCarb, $userPro, $userLip, $ttlCarb, $ttlLip,
 	<br>
 	</div>";
 }
-function getDetails($userId, $date, $categoryId, $id){
+function getDetails($userId, $date, $categoryId, $index){
 	$connection = new createConn();
 	$connection->connect();
-	$ssql2 = "SELECT b.id, b.list_id, b.cal_title, b.protein, b.fat, b.carbohydrate, b.calories, b.portion, d.satuan
+	$ssql2 = "SELECT a.sleep_wakeup_time as rest, b.id, b.list_id, b.cal_title, b.protein, b.fat, b.carbohydrate, b.calories, b.portion, d.satuan,
+			  b.gram
 			  FROM to_do_list a left join to_do_list_dtl b on a.id = b.list_id
 			  inner join satuan d on d.id = b.unit_id
 			  where a.user_id = " . $userId . " and a.date = '" . $date . "' and 
 			  a.category_id = " . $categoryId . " order by b.cal_title;";
 	$result2 = mysqli_query($connection->myconn, $ssql2);
 	while ($dtl=mysqli_fetch_array($result2)){
-		if ($id == 1){
+		if ($index == 1){
 			echo "<tr class='detail'>
 				<td colspan='2' style='padding-left: 50px;'>" . $dtl['cal_title'] . "</td>
 				<td>" . round($dtl['carbohydrate']) . "</td>
@@ -236,10 +268,13 @@ function getDetails($userId, $date, $categoryId, $id){
 				<td>" . round($dtl['protein']) . "</td>
 				<td>" . round($dtl['calories']) . "</td>
 				<td>" . number_format($dtl['portion'], 1, ".", "") . " " . $dtl['satuan'] . "</td>
-				<td class='text-center'>
-					<button class='btn btn-default btn-xs delete' data-list='" . $dtl['id'] . "'>
-					<i class='glyphicon glyphicon-remove'></i>
-				</td>
+				<td class='text-center'>";
+
+				if (! $GLOBALS['complete']){
+					echo "<button class='btn btn-default btn-xs delete' data-list='" . $dtl['id'] . "'>
+					<i class='glyphicon glyphicon-remove'></i>";
+				}
+				echo "</td>
 			</tr>";
 		}
 		else{
@@ -248,10 +283,12 @@ function getDetails($userId, $date, $categoryId, $id){
 				<td></td><td></td><td colspan='2'></td>
 				<td>" . $dtl['calories'] . " Kal</td>
 				<td class='text-center'>" . $dtl['portion'] . " Jam</td>
-				<td class='text-center'>
-					<button class='btn btn-default btn-xs delete' data-list='" . $dtl['id'] . "'>
-					<i class='glyphicon glyphicon-remove'></i>
-				</td>
+				<td class='text-center'>";
+				if (! $GLOBALS['complete']){
+					echo "<button class='btn btn-default btn-xs delete' data-list='" . $dtl['id'] . "'>
+					<i class='glyphicon glyphicon-remove'></i>";
+				}
+				echo "</td>
 			</tr>";
 		}
 	}
@@ -272,9 +309,11 @@ function food_recommended($UCalories, $date, $index, $listId, $userId){
 		while ($dtl=mysqli_fetch_array($result)){
 			if ($count == 1){
 				echo "<tr class='sgthdr'>
-					<td colspan='8' style='padding-left: 30px;' class='toggle'>
-						<a class='btn btn-default btn-xs choose' href='todolist/rekom/".$listId."/".$dtl['id']."'>Pilih</a>
-						 SARAN KE- " . $i . "</td>
+					<td colspan='8' style='padding-left: 30px;' class='toggle'>";
+					if (! $GLOBALS['complete']){
+						echo "<a class='btn btn-default btn-xs choose' href='todolist/rekom/".$listId."/".$dtl['id']."'>Pilih</a>";
+					}
+					echo "SARAN KE- " . $i . "</td>
 				</tr>";
 				$total = array(0, 0, 0, 0);
 				$i++;
@@ -343,15 +382,18 @@ function setTotal($listId){
 	mysqli_close($connection->myconn);
 } 
 
-function setTotal1($listId, $catId){ 
+function setTotal1($listId, $index){ 
 	$connection = new createConn();
-	$ssql = "SELECT sum(calories) as calorie, sum(portion) as portion
-			FROM `to_do_list_dtl` WHERE list_id = " . $listId . ";"; 
+	if ($index <= 5)
+		$ssql = "SELECT sum(calories) as calorie, sum(portion) as portion
+				FROM `to_do_list_dtl` WHERE list_id = " . $listId . ";"; 
+	else
+		$ssql = "SELECT sleep_wakeup_time FROM to_do_list WHERE id = " . $listId . ";";
 	$connection->connect();
 	$result = mysqli_query($connection->myconn, $ssql);
 	if ($result->num_rows > 0){
 		$dtl=mysqli_fetch_array($result);
-		switch ($catId) {
+		switch ($index) {
 			case 4:
 				$GLOBALS['ttlOther'][0] = $dtl['portion'];
 				echo "<td>" . round($dtl['calorie']) . "</td>
@@ -363,9 +405,17 @@ function setTotal1($listId, $catId){
 					<td>" . $dtl['portion'] . " Liter</td>";
 				break;
 			default:
-				$GLOBALS['ttlOther'][2] = $dtl['portion'];
+				//$GLOBALS['ttlOther'][2] = $dtl['portion'];
+				if ($index == 6)
+					$GLOBALS['ttlOther'][2] = $dtl['sleep_wakeup_time'];
+				else
+					$GLOBALS['ttlOther'][3] = $dtl['sleep_wakeup_time'];
+				if (! is_null($dtl['sleep_wakeup_time']))
+					$time = date_format(date_create($dtl['sleep_wakeup_time']), "d-m-Y H:i:s");
+				else
+					$time = "";
 				echo "<td></td>
-					<td>" . $dtl['portion'] . " Jam</td>";
+					<td>" . $time . "</td>";
 				break;
 		}
 	}
@@ -434,9 +484,14 @@ function weight($tanggal, $userId, $userCal, $userPro, $userLip, $userCarb){
 			<p>Kalori : " . $dtl['cal'] . " kal</p>
 			<p>Protein : " . $dtl['pro'] . " kal</p>
 			<p>Karbohidrat : " . $dtl['carb'] . " kal</p>
-			<p>Lemak : " . $dtl['fat'] . " kal</p>
-			<a href='todolist/reset/".$tanggal."' data-toggle='modal' class='weight'>Reset semua</a><br>
-			<a href='todolist/suggest/".$tanggal."'>Buat Daftar Rekomendasi Makanan</a></div>";
+			<p>Lemak : " . $dtl['fat'] . " kal</p>";
+			if (! $GLOBALS['complete']){
+				echo "<a href='todolist/reset/".$tanggal."' data-toggle='modal' class='weight'>Reset semua</a><br>
+				<a href='todolist/suggest/".$tanggal."'>Buat Daftar Rekomendasi Makanan</a></div>";
+			}
+			else{
+				echo "<h3>AGENDA SUDAH SELESAI</h3>";
+			}
 	}
 	else{
 		echo "<div><a href='#weight-modal' data-toggle='modal' class='weight'>Tentukan berat badan anda hari ini</a></div>";
@@ -456,10 +511,54 @@ function sleephistory($tanggal, $userId){
 		$GLOBALS['wakeup'] = $data['wakeup_time'];
 	mysqli_close($connection->myconn);
 }
+
+function cekComplete($tanggal, $userId){
+	$connection = new createConn();
+	$ssql = "select sum(completed) as complete from to_do_list where date = '" . $tanggal . "' and user_id = '" . $userId . "'";
+	$connection->connect();
+	$result = mysqli_query($connection->myconn, $ssql);
+	$data = mysqli_fetch_array($result);
+	if ($data['complete'] > 0)
+		$GLOBALS['complete'] = true;
+	else
+		$GLOBALS['complete'] = false;
+	mysqli_close($connection->myconn);
+}
 ?>
 
 <script type="text/javascript">
+function validasiForm(){
+	var kategori = $("#sleep-modal").find('input[name="category"]').val();
+	var hour = $("#sleep-modal").find('input[name="hour"]').val();
+	hour = new Date(hour);
+	if (kategori == "Tidur"){
+		var newDate = new Date("<?php echo "20".$date; ?>");
+		newDate.setHours(0);
+		newDate.setMinutes(0);
+		newDate.setSeconds(0);
+	}
+	else
+		var newDate = new Date("<?php echo $sleep; ?>");
+	if (hour.getTime() <= newDate.getTime()){
+		alert('Waktu yang ditentukan tidak tepat');
+		return false;
+	}
+	else{
+		return true;
+	}
+}
+
 $(document).ready(function() {
+    $('.form_datetime').datetimepicker({
+        weekStart: 1,
+        todayBtn:  1,
+		autoclose: 1,
+		todayHighlight: 1,
+		startView: 2,
+		forceParse: 0,
+        showMeridian: 1
+    });
+
 	for(i=0;i<4;i++){
 		if(! $('tr.head:eq('+i+')').next('tr.plan').next('tr.detail').length > 0){
 			$('tr.head:eq('+i+')').next('tr.plan').hide();
@@ -538,6 +637,112 @@ $(document).ready(function() {
         }
 	});
 
+	$("button.edit-detail").click(function(){
+		$("#edit-list-modal").on('show.bs.modal', function(e){
+			var elem = $(this);
+			var loc = $(e.currentTarget).find('div#tableEdit');
+			var id = $(e.relatedTarget).data('list');
+			$(e.currentTarget).find('input[name="listId"]').val(id);
+			$.ajax({ 
+				type: "GET",
+				url: "getDetailList.php",
+				data: {id : id},
+		        context: this,
+		        success: function(response){
+			        loc.html(response);
+
+					$('input[name="porsiEx[]"]').on('focusin', function(){
+							$(this).data('valExDtl', $(this).val());
+					});
+
+					$('input[name="porsiEx[]"]').on('change', function(){
+						var prev = $(this).data('valExDtl');
+						var current = $(this).val();
+						var tr = $(this).parent().parent().parent();
+						var cal = tr.children("td:eq(1)").text();
+						if (! isNaN($(this).val())){
+							var prevData = tr.children("td:eq(0)").find('input').val();
+							var obj = prevData.split(":");
+							var cal = Math.round(cal / prev * current); 
+							tr.children("td:eq(1)").text(cal);
+							var currData = tr.children("td:eq(0)").find('input').val(obj[0] + ':' + cal + ':' + current);
+						}
+						else{
+							alert('harap diisi dalam format angka !');
+							$(this).focus();
+						}
+					});
+
+
+					$('input[name="porsi[]"]').on('focusin', function(){
+							$(this).data('valDtl', $(this).val());
+					});
+
+					$('input[name="porsi[]"]').on('change', function(){
+						var prev = $(this).data('valDtl');
+						var current = $(this).val();
+						var loc = $(this).parent().parent().parent();
+						var cal = loc.children("td:eq(1)").text();
+						var fat = loc.children("td:eq(2)").text();
+						var pro = loc.children("td:eq(3)").text();
+						var carb = loc.children("td:eq(4)").text();
+						var gram = loc.children("td:eq(7)").text();
+						if (! isNaN($(this).val())){
+							fat = Math.round(fat / prev * current);
+							pro = Math.round(pro / prev * current);
+							carb = Math.round(carb / prev * current);
+							gram = Math.round(gram / prev * current);
+							cal = fat + pro + carb;
+							loc.children("td:eq(1)").text(cal); //cal
+							loc.children("td:eq(2)").text(fat); //fat
+							loc.children("td:eq(3)").text(pro); //pro
+							loc.children("td:eq(4)").text(carb); //carb
+							loc.children("td:eq(7)").text(gram); //gram
+
+					        var prevData = loc.children("td:eq(0)").find('input').val();
+					        var obj = prevData.split(":");
+					        var currData = loc.children("td:eq(0)").find('input').val(obj[0] + ':' + obj[1] + ":" + cal + ':' + fat + 
+					        ':' + pro + ':' + carb + ':' + current + ':' + gram);
+						}
+						else{
+							alert('harap diisi dalam format angka !');
+							$(this).focus();
+						}
+					});
+
+			        $('select[name="satuan[]"]').on('change', function(){
+						<!-- var dataLoc = $(this).parent().parent().children("td:eq(0)").find('input').data('value'); -->
+						var elem = $(this);
+						var id = $(this).val();
+						//alert(dataLoc['id'] + " " + dataLoc['pro']);
+						$.ajax({ 
+							type: "GET",
+							url: "getPortion.php",
+							data: {idUnit : id},
+					        context: this,
+					        success: function(json){
+					        	var json = $.parseJSON(json);
+						        var unitId = elem.val();
+						        var tr = elem.parent().parent();
+						        //update value untuk dikirim ke controller
+						        var prevData = tr.children("td:eq(0)").find('input').val();
+						        var obj = prevData.split(":");
+						        var currData = tr.children("td:eq(0)").find('input').val(obj[0] + ':' + unitId + ':' + json.cal + ':' + json.fat + ':' + json.pro + ':' + json.carb + ':1:' + json.gram);
+
+						        var cal = tr.children("td:eq(1)").text(json.cal);
+						        var fat = tr.children("td:eq(2)").text(json.fat);
+						        var pro = tr.children("td:eq(3)").text(json.pro);
+						        var carb = tr.children("td:eq(4)").text(json.carb);
+						        var port = tr.children("td:eq(5)").find('input[name="porsi"]').val(1);
+						        var gram = tr.children("td:eq(7)").text(json.gram);
+					    	}
+					    });
+					});
+		    	}
+		    });
+		});
+	});
+
     $("button.add").click(function(){
 		//alert ($(this).attr('id'));
 		$("#add-list-modal").on('show.bs.modal', function(e) {
@@ -566,7 +771,6 @@ $(document).ready(function() {
 		        type:'delete',
 		        url: url + '/' + listId,
 		    }).done(function(data){
-		        alert('berhasil');
 		        location.reload();
 		    }); 
 	    }
@@ -590,27 +794,56 @@ $(document).ready(function() {
 			$(e.currentTarget).find('input[name="category"]').val(category);
 			$(e.currentTarget).find('input[name="portion"]').val(portion);
 		});
-		$("#sleep-modal").on('show.bs.modal', function(e) {
+		$("#sleep-modal").on('shown.bs.modal', function(e) {
 			var id = $(e.relatedTarget).data('kategori');
 			var listId = $(e.relatedTarget).data('list');
+			var jenis = $(e.relatedTarget).data('jenis');
 			var category;
 			var portion;
-			var sleep = "<?php echo $sleep; ?>";
-			var wakeup = "<?php echo $wakeup; ?>";
 			var date = new Date();
 			date = "<?php echo $date; ?>";
-			if (sleep == "")
-				category = "Tidur";
-			else
-				category = "Bangun";
+
+			$('.form_datetime').each(function() {
+				if (jenis == "Tidur"){
+				    var minDate = new Date("<?php echo "20".$date; ?>");
+				    minDate.setHours(0);
+				    minDate.setMinutes(0);
+				    minDate.setSeconds(0,0);
+				}
+				else
+					var minDate = new Date("<?php echo $sleep; ?>");
+
+			    var $picker = $(this);
+			    $picker.datetimepicker();
+			    var pickerObject = $picker.data('datetimepicker');
+
+			    $picker.on('changeDate', function(ev){
+			        if (ev.date.valueOf() < minDate.valueOf()){
+			            // Handle previous date
+			            <!-- alert('Nope'); -->
+			            pickerObject.setValue(minDate);
+			            
+			            // And this for later versions (in case)
+			            ev.preventDefault();
+			            return false;
+			        }
+			    });
+			});
+
 			portion = $("#sleep").val();
-			$(e.currentTarget).find('.page-header').children('h2').text("Jam " + category);
-			$(e.currentTarget).find('#porsi').children('label').text("Waktu");
+			$(e.currentTarget).find('.page-header').children('h2').text("Jam " + jenis);
 			$(e.currentTarget).find('input[name="catId"]').val(id);
 			$(e.currentTarget).find('input[name="listId"]').val(listId);
 			$(e.currentTarget).find('input[name="date"]').val(date);
-			$(e.currentTarget).find('input[name="category"]').val(category);
+			$(e.currentTarget).find('input[name="category"]').val(jenis);
 			$(e.currentTarget).find('input[name="portion"]').val(portion);
+		});
+	});
+
+	$("button.save-detail").click(function(){
+		$("#save-list-modal").on('show.bs.modal', function(e){
+			var id = $(e.relatedTarget).data('list');
+			$(e.currentTarget).find('input[name="id"]').val(id);
 		});
 	});
 

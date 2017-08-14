@@ -7,6 +7,7 @@ $ssql = $ssql . "left join to_do_list_dtl c on b.id = c.list_id ";
 $ssql = $ssql . "left join calories_list_dtl d on c.cal_id = d.id ";
 $ssql = $ssql . "where b.date = " . $date . " and b.user_id = " . $userId . " ";
 $ssql = $ssql . "order by a.id;";
+dataBangun($date);
 $result = mysqli_query($connection->myconn, $ssql);
 
 if ($result->num_rows > 0){

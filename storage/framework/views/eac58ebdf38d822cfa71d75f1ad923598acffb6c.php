@@ -6,11 +6,12 @@
 	<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css" />
 	<script src="bootstrap/js/jquery.js" charset="UTF-8"></script>
 	<link rel="stylesheet" type="text/css" href="jquery-ui-1.12.1/jquery-ui.css">
-	<script type="text/javascript" src="bootstrap/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
-	<script type="text/javascript" src="bootstrap/js/bootstrap-datetimepicker.uk.js" charset="UTF-8"></script>
-	<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap-datetimepicker.css">
+	<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap-datetimepicker.min.css">
 	<script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="jquery-ui-1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap-timepicker.css">
+	<script src="bootstrap/js/bootstrap-timepicker.min.js"></script>
+
     <style type="text/css">
 		tr.plan, tr.suggest{
 			font-weight: bold;
@@ -69,6 +70,8 @@
 <div class="container">
 	<?php if(Session::has('success')): ?>
 		<div class="alert alert-success"><?php echo e(Session::get('success')); ?></div>
+	<?php elseif(Session::has('failed')): ?>
+		<div class="alert alert-warning"><?php echo e(Session::get('failed')); ?></div>
 	<?php endif; ?>
 	<div class='page-header'><h2 class='text-center'>AGENDA KEGIATAN</h2></div>
 	<div class="row">
@@ -93,6 +96,8 @@
 <script type="text/javascript">
 	var url = "<?php echo route('item-ajax.index')?>";
 </script>
+<script type="text/javascript" src="bootstrap/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+<script type="text/javascript" src="bootstrap/js/bootstrap-datetimepicker.uk.js" charset="UTF-8"></script>
 <script type="text/javascript">
 $(document).ready(function() {
 	$.ajax({ 

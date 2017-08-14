@@ -164,7 +164,6 @@ class CRUDController extends Controller
             $now = Carbon::now()->format('y-m-d');
             $userfullname = Auth::user()->first_name . " " . Auth::user()->last_name;
             if (Auth::user()->access_id == '2'){
-
                 $exist = DB::table('steps')
                          ->where('user_id', $userId)
                          ->where('date', $now)
@@ -179,25 +178,26 @@ class CRUDController extends Controller
                         ->where('user_id', $userId)
                         ->first();                        
 
-                for($i=1;$i<=6;$i++){
-                    $categoryName = Category::select('category')
-                                    ->where('id', $i)
-                                    ->first();
-                    $categoryName = $categoryName->category;
+                for($i=1;$i<=7;$i++){
+                    $cat = Category::select('id', 'category')
+                           ->orderby('id')
+                           ->get();
+                    $categoryId = $cat[$i-1]->id;
+                    $categoryName = $cat[$i-1]->category;
                     $exist = DB::table('to_do_list')
                              ->where('user_id', $userId)
-                             ->where('category_id', $i)
+                             ->where('category_id', $categoryId)
                              ->where('date', $now)
                              ->exists();
                     if (! $exist){
                         $insert = DB::table('to_do_list')
-                                ->insert(['user_id'=>$userId, 'user_fullname'=>$userfullname, 'category_id'=>$i, 
+                                ->insert(['user_id'=>$userId, 'user_fullname'=>$userfullname, 'category_id'=>$categoryId, 
                                 'category'=>$categoryName, 'date'=>$now]);
                     }
 
                     if(is_null($streak)){ //belum ada data streak, create ulang semua
                         DB::table('streak')
-                        ->insert(['user_id'=>$userId, 'user_fullname'=>$userfullname, 'cat_id'=>$i, 
+                        ->insert(['user_id'=>$userId, 'user_fullname'=>$userfullname, 'cat_id'=>$categoryId, 
                             'category'=>$categoryName, 'best_streak'=>0, 'now_streak'=>0]);
                     }
                 }
@@ -231,7 +231,6 @@ class CRUDController extends Controller
             DB::table('recommended')
             ->where('list_id', $listId[$i-1]->id)
             ->delete();
-
             for ($k=1;$k<=5;$k++){
                 $ttlCarb = 0;
                 $ttlPro = 0;
@@ -488,7 +487,7 @@ class CRUDController extends Controller
                         }
                     }
                 } while($userCal - $ttlCal >= 100);
-                
+
                 for($j=0;$j<count($idRekomend);$j++){
                     DB::table('recommended')
                     ->insert(['list_id'=>$listId[$i-1]->id, 'cal_id'=>$idRekomend[$j]->id, 
@@ -524,6 +523,68 @@ class CRUDController extends Controller
             ->insert(['list_id'=>$listId, 'cal_id'=>$data[$i]->cal_id, 'cal_title'=>$data[$i]->cal_title, 'protein'=>$data[$i]->protein, 'fat'=>$data[$i]->fat, 'carbohydrate'=>$data[$i]->carbohydrate, 'calories'=>$data[$i]->calories, 'portion'=>$data[$i]->portion, 'unit_id'=>$data[$i]->unit_id, 'gram'=>$data[$i]->gram]);
         }
         return Redirect::to('todolist')->with('success', 'agenda berhasil ditambahkan berdasarkan saran');;
+    }
+
+    public function updateList(){
+        $listId = Input::get('listId');
+        $dtl = Input::get('dtlId');
+        $cat = DB::table('to_do_list')
+               ->select('category_id')
+               ->where('id', $listId)
+               ->first();
+        if ($cat->category_id != 4){
+            for($i=0;$i<count($dtl);$i++){
+                $data = explode(":", $dtl[$i]);
+                $unitId = DB::table('satuan_dtl')
+                          ->select('unit_id')
+                          ->where('id', $data[1])
+                          ->first();
+                DB::table('to_do_list_dtl')
+                ->where('id', $data[0])
+                ->update(['protein'=>$data[4], 'fat'=>$data[3], 'carbohydrate'=>$data[5], 'calories'=>$data[2], 'portion'=>$data[6], 'gram'=>$data[7], 'unit_id'=>$unitId->unit_id]);
+            }
+        }
+        else{
+            for($i=0;$i<count($dtl);$i++){
+                $data = explode(":", $dtl[$i]);
+                DB::table('to_do_list_dtl')
+                ->where('id', $data[0])
+                ->update(['calories'=>$data[1], 'portion'=>$data[2]]);
+            }
+        }
+        return Redirect::to('todolist')->with('success', 'agenda anda berhasil diubah');;
+    }
+
+    public function saveList(){
+        $data = array(
+            "id"=>Input::get('id'),
+            "judul"=>Input::get('judul'),
+            "deskripsi"=>Input::get('deskripsi'),
+            "bagikan"=>is_null(Input::get('shared')) ? '0' : '1',
+            "userid"=>Auth::user()->id,
+            "userfullname"=>Auth::user()->first_name . " " . Auth::user()->last_name
+        );
+        $hdr = DB::table('menu')
+                ->insert(['user_id'=>$data['userid'], 'user_fullname'=>$data['userfullname'], 'title'=>$data['judul'], 
+                'description'=>$data['deskripsi'], 'share'=>$data['bagikan']]);
+        if ($hdr){
+            $hdrId = DB::table('menu')
+                     ->select('id')
+                     ->orderby('id', 'desc')
+                     ->first();
+            $list = DB::table('to_do_list_dtl')
+                       ->select('cal_id', 'cal_title', 'protein', 'fat', 'carbohydrate', 'calories', 'portion', 'gram', 'unit_id')
+                       ->where('list_id', $data['id'])
+                       ->get();
+            for($i=0;$i<count($list);$i++){
+                DB::table('menu_dtl')
+                ->insert(['menu_id'=>$hdrId->id, 'menu_name'=>$data['judul'], 'list_id'=>$list[$i]->cal_id, 'food_name'=>$list[$i]->cal_title, 'protein'=>$list[$i]->protein, 'fat'=>$list[$i]->fat, 'carbohydrate'=>$list[$i]->carbohydrate, 'calories'=>$list[$i]->calories, 'portion'=>$list[$i]->portion, 'gram'=>$list[$i]->gram, 'unit_id'=>$list[$i]->unit_id]);
+            }
+            return Redirect::to('todolist')->with('success', 'agenda berhasil disimpan');
+        }
+        else{
+            return Redirect::to('todolist')->with('failed', 'agenda gagal disimpan');
+        }
     }
 
     public function updateActivity(){
@@ -708,7 +769,6 @@ class CRUDController extends Controller
 
         User::where('id', $userId)
         ->update(['last_login'=>$current]);
-
         $msg = "";
         $date = date_format(date_create(Input::get('hour')), "Y-m-d H:i:s");
         $data = array(
@@ -720,12 +780,15 @@ class CRUDController extends Controller
         );
         $kategori = Input::get('category');
 
+        DB::table('to_do_list')
+        ->where('id', $data['listId'])
+        ->update(['sleep_wakeup_time'=>$data['hour']]);
+
         if ($data['kategori'] == "Tidur"){
             DB::table('history')
             ->where('user_id', Auth::user()->id)
             ->where('date', $data['date'])
             ->update(['sleep_time'=>$data['hour']]);
-
             $msg = "Jam Tidur Telah Ditentukan";
         }
         else{
@@ -757,15 +820,6 @@ class CRUDController extends Controller
                 ->insert(['list_id'=>$data['listId'], 'cal_id'=>$category, 'cal_title'=>'sleep', 'protein'=>0, 'fat'=>0, 'carbohydrate'=>0, 'calories'=>0, 'portion'=>0, 'unit_id'=>$unitId]);
             }
 
-            $idDtl = DB::table('to_do_list')
-                     ->join('to_do_list_dtl', 'to_do_list.id', 'to_do_list_dtl.list_id')
-                     ->select('to_do_list_dtl.id')
-                     ->where('to_do_list.id', $data['listId'])
-                     ->where('to_do_list.category_id',6)
-                     ->first();
-
-            $idDtl = $idDtl->id;
-
             $hour = DB::table('history')
                     ->select('wakeup_time', 'sleep_time')
                     ->where('user_id', $userId)
@@ -775,10 +829,6 @@ class CRUDController extends Controller
             $sleep = date_create($hour->sleep_time);
             $selisih = date_diff($wakeup, $sleep);
             $selisih = $selisih->h + number_format($selisih->i / 60, 1, '.', '');
-
-            DB::table('to_do_list_dtl')
-            ->where('id', $idDtl)
-            ->update(['portion'=>$selisih]);
 
             DB::table('history')
             ->where('user_id', Auth::user()->id)
@@ -791,6 +841,7 @@ class CRUDController extends Controller
                                  ->select('id', 'date', 'category_id')
                                  ->where('completed', '0')
                                  ->where('date', '<=', $data['date'])
+                                 ->where('category_id', '<>', 7)
                                  ->where('user_id', $userId)
                                  ->orderby('date')
                                  ->get();
@@ -798,14 +849,14 @@ class CRUDController extends Controller
                 $lastDate = "";
                 for($i=0;$i<count($existNonCompleted);$i++){
                     if ($lastDate == "")
-                        $total = array(0, 0, 0, 0, 0, 0);
+                        $total = array(0, 0, 0, 0, 0, 0, 0);
                     else if ($lastDate != $existNonCompleted[$i]->date){                            
                         $ttlCal = $total[0] + $total[1] + $total[2];
                         DB::table('history') //untuk update history
                         ->where('date', $existNonCompleted[$i-1]->date)
                         ->where('user_id', $userId)
                         ->update(['protein'=>$total[0], 'carbohydrate'=>$total[1], 'fat'=>$total[2], 'calories'=>$ttlCal, 'exercise'=>$total[3], 'drink'=>$total[4], 'sleep'=>$total[5]]);
-                        $total = array(0, 0, 0, 0, 0, 0);
+                        $total = array(0, 0, 0, 0, 0, 0, 0);
                     }
                     $sukses = 0;
                     $eat = DB::table('to_do_list_dtl')
@@ -836,6 +887,7 @@ class CRUDController extends Controller
                     else if ($i == 3){
                         if ($eat->portion >= 0.5)
                             $sukses = 1;
+                        $total[6] += $eat->cal;
                         $total[3] += $eat->portion;
                     }
                     else if ($i == 4){
@@ -844,9 +896,9 @@ class CRUDController extends Controller
                         $total[4] += $eat->portion;
                     }
                     else if ($i == 5){
-                        if ($eat->portion >= 6)
+                        if ($selisih >= 6 && $selisih <= 9)
                             $sukses = 1;
-                        $total[5] += $eat->portion;
+                        $total[5] += $selisih;
                     }
 
                     $streak = DB::table('streak')
@@ -854,7 +906,6 @@ class CRUDController extends Controller
                                 ->where('user_id', $userId)
                                 ->where('cat_id', $i + 1)
                                 ->first();
-
                     $best = $streak->best_streak;
                     $now = $streak->now_streak;
 
@@ -886,7 +937,7 @@ class CRUDController extends Controller
                         DB::table('history') //untuk update history
                         ->where('date', $existNonCompleted[$i]->date)
                         ->where('user_id', $userId)
-                        ->update(['protein'=>$total[0], 'carbohydrate'=>$total[1], 'fat'=>$total[2], 'calories'=>$ttlCal, 'exercise'=>$total[3], 'drink'=>$total[4], 'sleep'=>$total[5]]);
+                        ->update(['protein'=>$total[0], 'carbohydrate'=>$total[1], 'fat'=>$total[2], 'calories'=>$ttlCal, 'exercise'=>$total[3], 'drink'=>$total[4], 'sleep'=>$total[5], 'exercise_cal'=>$total[6]]);
                     }
 
                     $lastDate = $existNonCompleted[$i]->date;
@@ -1082,10 +1133,15 @@ class CRUDController extends Controller
         User::where('id', Auth::user()->id)
         ->update(['last_login'=>$current]);
         $category = Input::get('category');
+        $nonCat = Category::select('id')
+                  ->where('category', 'wakeup')
+                  ->first();
+        $nonCat = $nonCat->id;
         if ($category != ""){
             if ($category == "All")   
                 $data = DB::table('streak')
                         ->select('user_id', 'user_fullname', 'cat_id', 'category', 'best_streak', 'now_streak')
+                        ->where('cat_id', '<>', $nonCat)
                         ->orderby('cat_id')
                         ->orderby('best_streak', 'desc')
                         ->orderby('now_streak', 'desc')
@@ -1095,6 +1151,7 @@ class CRUDController extends Controller
                 $data = DB::table('streak')
                         ->select('user_id', 'user_fullname', 'cat_id', 'category', 'best_streak', 'now_streak')
                         ->where('category', $category)
+                        ->where('cat_id', '<>', $nonCat)
                         ->orderby('cat_id')
                         ->orderby('best_streak', 'desc')
                         ->orderby('now_streak', 'desc')
@@ -1105,6 +1162,7 @@ class CRUDController extends Controller
         else{
             $data = DB::table('streak')
                     ->select('user_id', 'user_fullname', 'cat_id', 'category', 'best_streak', 'now_streak')
+                    ->where('cat_id', '<>', $nonCat)
                     ->orderby('cat_id')
                     ->orderby('best_streak', 'desc')
                     ->orderby('now_streak', 'desc')
@@ -1322,7 +1380,7 @@ class CRUDController extends Controller
         }
 
         $data = DB::table('history')
-                ->select('weight', 'weight_goal', 'protein', 'protein_goal', 'fat', 'fat_goal', 'carbohydrate', 'carbohydrate_goal', 'calories', 'calories_goal', 'exercise', 'drink', 'sleep', DB::raw("day(date) as date"))
+                ->select('weight', 'weight_goal', 'protein', 'protein_goal', 'fat', 'fat_goal', 'carbohydrate', 'carbohydrate_goal', 'calories', 'calories_goal', 'exercise', 'exercise_cal', 'drink', 'sleep', DB::raw("day(date) as date"))
                 ->where('user_id', Auth::user()->id)
                 ->whereMonth('date', $month)
                 ->whereYear('date', $year)

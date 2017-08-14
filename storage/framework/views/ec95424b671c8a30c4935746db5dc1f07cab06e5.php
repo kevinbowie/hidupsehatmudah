@@ -51,16 +51,160 @@ else{
             </form>
         </div>
 		<div class="col-lg-6">
-			<div id="calories"></div><br>
+            <div>
+			    <div id="calories"></div><br>
+                <?php 
+                $i = 0;
+                $get = 0;
+                $goal = 0;
+                foreach($data as $values){
+                    $i++;
+                    $get += $values->calories;
+                    $goal += $values->calories_goal;
+                }
+                $get = $get/$i;
+                $goal = $goal/$i;
+                if ($goal - $get >= 300)
+                    $msg = "<div class='alert alert-warning text-center'>Kebutuhan Kalori Anda Rata-Rata Kurang Terpenuhi</div>";
+                else if ($goal - $get >= -300)
+                    $msg = "<div class='alert alert-danger text-center'>Kebutuhan Kalori Anda Rata-Rata Berlebihan</div>";
+                else
+                    $msg = "<div class='alert alert-success text-center'>Kebutuhan Kalori Anda Rata-Rata Terpenuhi</div>";
+                echo $msg;
+                ?>
+            </div>
 			<div id="protein"></div><br>
+                <?php 
+                $i = 0;
+                $get = 0;
+                $goal = 0;
+                foreach($data as $values){
+                    $i++;
+                    $get += $values->protein;
+                    $goal += $values->protein_goal;
+                }
+                $get = $get/$i;
+                $goal = $goal/$i;
+                if ($goal - $get >= 150)
+                    $msg = "<div class='alert alert-warning text-center'>Kebutuhan Protein Anda Rata-Rata Kurang Terpenuhi</div>";
+                else if ($goal - $get >= -200)
+                    $msg = "<div class='alert alert-danger text-center'>Kebutuhan Protein Anda Rata-Rata Berlebihan</div>";
+                else
+                    $msg = "<div class='alert alert-success text-center'>Kebutuhan Protein Anda Rata-Rata Terpenuhi</div>";
+                echo $msg;
+                ?>
             <div id="fat"></div><br>
+                <?php 
+                $i = 0;
+                $get = 0;
+                $goal = 0;
+                foreach($data as $values){
+                    $i++;
+                    $get += $values->fat;
+                    $goal += $values->fat_goal;
+                }
+                $get = $get/$i;
+                $goal = $goal/$i;
+                if ($goal - $get >= 150)
+                    $msg = "<div class='alert alert-warning text-center'>Kebutuhan Lemak Anda Rata-Rata Kurang Terpenuhi</div>";
+                else if ($goal - $get >= -100)
+                    $msg = "<div class='alert alert-danger text-center'>Kebutuhan Lemak Anda Rata-Rata Berlebihan</div>";
+                else
+                    $msg = "<div class='alert alert-success text-center'>Kebutuhan Lemak Anda Rata-Rata Terpenuhi</div>";
+                echo $msg;
+                ?>
             <div id="carbo"></div><br>
+                <?php 
+                $i = 0;
+                $get = 0;
+                $goal = 0;
+                foreach($data as $values){
+                    $i++;
+                    $get += $values->fat;
+                    $goal += $values->fat_goal;
+                }
+                $get = $get/$i;
+                $goal = $goal/$i;
+                if ($goal - $get >= 150)
+                    $msg = "<div class='alert alert-warning text-center'>Kebutuhan Karbohidrat Anda Rata-Rata Kurang Terpenuhi</div>";
+                else if ($goal - $get >= -100)
+                    $msg = "<div class='alert alert-danger text-center'>Kebutuhan Karbohidrat Anda Rata-Rata Berlebihan</div>";
+                else
+                    $msg = "<div class='alert alert-success text-center'>Kebutuhan Karbohidrat Anda Rata-Rata Terpenuhi</div>";
+                echo $msg;
+                ?>
 		</div>
 		<div class="col-lg-6">
 			<div id="exercise"></div><br>
+                <?php 
+                $i = 0;
+                $get = 0;
+                $goal = 0;
+                foreach($data as $values){
+                    $i++;
+                    $get += $values->exercise;
+                }
+                $get = $get/$i;
+                if ($get < 0.5)
+                    $msg = "<div class='alert alert-warning text-center'>Kegiatan Olahraga Anda Rata-Rata Kurang Terpenuhi dari 0.5 Jam</div>";
+                else
+                    $msg = "<div class='alert alert-success text-center'>Kegiatan Olahraga Anda Rata-Rata Terpenuhi dari 0.5 Jam</div>";
+                echo $msg;
+                ?>
 			<div id="drink"></div><br>
+                <?php 
+                $i = 0;
+                $get = 0;
+                $goal = 0;
+                foreach($data as $values){
+                    $i++;
+                    $get += $values->drink;
+                }
+                $get = $get/$i;
+                if ($get < 2)
+                    $msg = "<div class='alert alert-warning text-center'>Konsumsi Minum Anda Rata-Rata Kurang Terpenuhi dari 2 Liter</div>";
+                else
+                    $msg = "<div class='alert alert-success text-center'>Konsumsi Minum Anda Rata-Rata Terpenuhi dari 2 Liter</div>";
+                echo $msg;
+                ?>
 			<div id="sleep"></div><br>
+                <?php 
+                $i = 0;
+                $get = 0;
+                $goal = 0;
+                foreach($data as $values){
+                    $i++;
+                    $get += $values->sleep;
+                }
+                $get = $get/$i;
+                if ($get < 6)
+                    $msg = "<div class='alert alert-warning text-center'>Kebutuhan Tidur Anda Rata-Rata Kurang Terpenuhi dari 6 Jam</div>";
+                else if ($get > 9)
+                    $msg = "<div class='alert alert-danger text-center'>Kebutuhan Tidur Anda Rata-Rata Berlebihan dari 9 Jam</div>";
+                else
+                    $msg = "<div class='alert alert-success text-center'>Kebutuhan Tidur Anda Rata-Rata Terpenuhi</div>";
+                echo $msg;
+                ?>
             <div id="bb"></div><br>
+                <?php 
+                $i = 0;
+                $get = 0;
+                $goal = 0;
+                foreach($data as $values){
+                    $i++;
+                    $get += $values->weight;
+                    $goal += $values->weight_goal;
+                }
+                $get = $get/$i;
+                $goal = $goal/$i;
+                if ($goal - $get >= 5)
+                    $msg = "<div class='alert alert-warning text-center'>Berat Badan Anda Rata-Rata Kurang Terpenuhi Dibawah 5 Kg</div>";
+                else if ($goal - $get >= -5)
+                    $msg = "<div class='alert alert-danger text-center'>Berat Badan Anda Rata-Rata Berlebihan Diatas 5 Kg</div>";
+                else
+                    $msg = "<div class='alert alert-success text-center'>Berat Badan Anda Masih Ideal</div>";
+                echo $msg;
+                ?>
 		</div>
 	</div>
 </div>
@@ -69,6 +213,7 @@ else{
 </html>
 <script type="text/javascript">
 var month = "<?php echo $bulan; ?>";
+var year = "<?php echo $thn; ?>";
 function validateForm(){
     flag = false;
     if ($('input[name="year"]').val().length != 4)
@@ -82,7 +227,7 @@ function validateForm(){
 
 $(document).ready(function() {
     var title = {
-        text: 'Konsumsi Air Minum ' + month + ' 2017'
+        text: 'Konsumsi Air Minum ' + month + ' ' + year
     };
 
     var subtitle = {
@@ -148,7 +293,7 @@ $(document).ready(function() {
 
 Highcharts.chart('sleep', {
     title : {
-        text: 'Jam Tidur ' + month + ' 2017'   
+        text: 'Jam Tidur ' + month + ' ' + year
     },
 
     subtitle : {
@@ -201,57 +346,103 @@ Highcharts.chart('sleep', {
 });
 
 Highcharts.chart('exercise', {
-    title : {
-        text: 'Durasi Olahraga ' + month + ' 2017'   
+   
+    title: {
+        text: 'Olahraga ' + month + ' ' + year
     },
-
-    subtitle : {
-        //text: 'Source: WorldClimate.com'
+    subtitle: {
+        <!-- text: 'Source: WorldClimate.com' -->
     },
-
-    xAxis : {
-        title: {
-            text: 'Tanggal'
-        },
+    xAxis: [{
         categories: [<?php 
             foreach($data as $values){
                 echo $values->date; ?> , <?php
             }        
         ?>]
-    },
-
-    yAxis : {
-        title: {
-            text: 'Jam'
+    }],
+    yAxis: [{ // Primary yAxis
+        labels: {
+            format: '{value}Jam',
+            style: {
+                color: Highcharts.getOptions().colors[2]
+            }
         },
-        plotLines: [{
-            value: 0,
-            width: 1,
-            color: '#808080'
-        }]
-    },
+        title: {
+            text: '',
+            style: {
+                color: Highcharts.getOptions().colors[2]
+            }
+        },
+        opposite: true
 
-    tooltip : {
-        valueSuffix: 'Jam'
-    },
-
-    legend : {
-        layout: 'vertical',
-        align: 'right',
-        verticalAlign: 'middle',
-        borderWidth: 0
-    },
-
-    series :  [
-        {
-            name: 'Olahraga',
-            data:   [<?php 
-                foreach($data as $values){
-                    echo $values->exercise; ?> , <?php
-                }        
-            ?>]
+    }, { // Secondary yAxis
+        gridLineWidth: 0,
+        title: {
+            text: 'Waktu',
+            style: {
+                color: Highcharts.getOptions().colors[0]
+            }
+        },
+        labels: {
+            format: '{value} Jam',
+            style: {
+                color: Highcharts.getOptions().colors[0]
+            }
         }
-    ]
+
+    }, { // Tertiary yAxis
+        gridLineWidth: 0,
+        title: {
+            text: 'Kalori',
+            style: {
+                color: Highcharts.getOptions().colors[1]
+            }
+        },
+        labels: {
+            format: '{value} kal',
+            style: {
+                color: Highcharts.getOptions().colors[1]
+            }
+        },
+        opposite: true
+    }],
+    tooltip: {
+        shared: true
+    },
+    legend: {
+        align: 'left',
+        x: 80,
+        verticalAlign: 'top',
+        y: 55
+    },
+    series: [{
+        name: 'Waktu',
+        type: 'spline',
+        yAxis: 1,
+        pointPlacement: -0.1,
+        data: [<?php
+            foreach($data as $values){
+                echo $values->exercise; ?>, <?php
+            }
+        ?>],
+        tooltip: {
+            valueSuffix: ' Jam'
+        }
+
+    }, {
+        name: 'Kalori',
+        type: 'spline',
+        yAxis: 2,
+        pointPlacement: 0,
+        data: [<?php
+            foreach($data as $values){
+                echo $values->exercise_cal; ?>, <?php
+            }
+        ?>],
+        tooltip: {
+            valueSuffix: ' Kal'
+        }
+    }]
 });
 
 Highcharts.chart('calories', {
@@ -299,6 +490,7 @@ Highcharts.chart('calories', {
     series :  [
         {
             name: 'Konsumsi',
+            pointPlacement: -0.1,
             data: [<?php 
                 foreach($data as $values){
                     echo $values->calories; ?> , <?php
@@ -307,6 +499,7 @@ Highcharts.chart('calories', {
         },
         {
             name: 'Target',
+            pointPlacement: 0,
             data: [<?php 
                 foreach($data as $values){
                     echo $values->calories_goal; ?>, <?php
@@ -361,6 +554,7 @@ Highcharts.chart('protein', {
     series :  [
         {
             name: 'Konsumsi',
+            pointPlacement: -0.1,
             data: [<?php 
                 foreach($data as $values){
                     echo $values->protein; ?> , <?php
@@ -369,6 +563,7 @@ Highcharts.chart('protein', {
         },
         {
             name: 'Target',
+            pointPlacement: 0,
             data: [<?php 
                 foreach($data as $values){
                     echo $values->protein_goal; ?>, <?php
@@ -423,6 +618,7 @@ Highcharts.chart('fat', {
     series :  [
         {
             name: 'Konsumsi',
+            pointPlacement: -0.1,
             data: [<?php 
                 foreach($data as $values){
                     echo $values->fat; ?> , <?php
@@ -431,6 +627,7 @@ Highcharts.chart('fat', {
         },
         {
             name: 'Target',
+            pointPlacement: 0,
             data: [<?php 
                 foreach($data as $values){
                     echo $values->fat_goal; ?>, <?php
@@ -485,6 +682,7 @@ Highcharts.chart('carbo', {
     series :  [
         {
             name: 'Konsumsi',
+            pointPlacement: -0.1,
             data: [<?php 
                 foreach($data as $values){
                     echo $values->carbohydrate; ?> , <?php
@@ -493,6 +691,7 @@ Highcharts.chart('carbo', {
         },
         {
             name: 'Target',
+            pointPlacement: 0,
             data: [<?php 
                 foreach($data as $values){
                     echo $values->carbohydrate_goal; ?>, <?php
@@ -547,6 +746,7 @@ Highcharts.chart('bb', {
     series :  [
         {
             name: 'Berat Badan',
+            pointPlacement: -0.1,
             data: [<?php 
                 foreach($data as $values){
                     echo $values->weight; ?> , <?php
@@ -555,6 +755,7 @@ Highcharts.chart('bb', {
         },
         {
             name: 'Target',
+            pointPlacement: 0,
             data: [<?php 
                 foreach($data as $values){
                     echo $values->weight_goal; ?>, <?php

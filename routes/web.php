@@ -76,6 +76,10 @@ Route::post('todolist/activity/sleep', 'CRUDController@updateActivitySleep');
 
 Route::post('todolist/activity', 'CRUDController@updateActivity');
 
+Route::post('todolist/editlist', 'CRUDController@updateList');
+
+Route::post('todolist/simpanlist', 'CRUDController@saveList');
+
 Route::post('todolist/reminder', 'CRUDController@setReminder');
 
 Route::post('/todolist/exercise', 'CRUDController@updateExercise');

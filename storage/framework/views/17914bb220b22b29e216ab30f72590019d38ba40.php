@@ -55,16 +55,32 @@
 					<option value="Drink">Minum</option>
 				</select>
 				<br>
-				<button class="btn btn-primary" type="submit" id="btnCategory">Tampilkan</button>
+				<button class="btn btn-primary" type="submit" id="btnCategory">Tampilkan</button><br><br>
+				<div class='alert alert-info text-center'>Streak digunakan untuk menghitung kedisiplinan pengguna dalam memenuhi hidup sehat secara berturut-turut tanpa henti</div>
 			</form>
 		<?php 
-		$i = 1; $lastCategory = ""; $nowCategory = ""; $len = count($data); $exists = false; $reload = true; 
+		$i = 1; $lastCategory = ""; $nowCategory = ""; $len = count($data); $exists = false; $reload = true; $j = 1;
 		?>
 		<?php $__currentLoopData = $data; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $datas): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?> <?php
 			$nowCategory = $datas->cat_id;
 			if ($lastCategory != $nowCategory){
-				if ($i > 1)
+				if ($i > 1){
 					echo "</tbody></table>";
+					switch ($j){
+						case 1:
+						case 2:
+						case 3:
+							echo "<div class='alert alert-info'>Streak terpenuhi berdasarkan pencapaian kebutuhan energi kalori per porsi tergatung kebutuhan masing-masing</div>";
+							break;
+						case 4:
+							echo "<div class='alert alert-info'>Streak terpenuhi jika olahraga dilakukan minimal 1/2 jam</div>";
+							break;
+						default:
+							echo "<div class='alert alert-info'>Streak terpenuhi jika konsumsi air minum minimal 2 liter</div>";
+							break;
+					}
+					$j++;
+				}
 				$i = 1;
 				$exists = false;
 				$reload = true;
@@ -140,7 +156,7 @@
       		$len -= 1;
       		$lastCategory = $nowCategory; 
       		if ($len == 0){
-      			echo "</tbody></table><br>";
+      			echo "</tbody></table><br><div class='alert alert-info'>Streak terpenuhi jika durasi jam tidur sekitar 6 - 9 jam</div>";
       		} ?>
 		<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 		<!-- </div> -->

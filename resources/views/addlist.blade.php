@@ -1,5 +1,3 @@
-<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap-timepicker.css">
-<script src="bootstrap/js/bootstrap-timepicker.min.js"></script>
 <style type="text/css">
 /*  bhoechie tab */
 div.bhoechie-tab-container{
@@ -243,7 +241,8 @@ function menu_list($query){
 						}
 
 					setTotal($totalCal, $totalLip, $totalPro, $totalCarb);
-					echo "</div>
+					echo "<div><button class='btn btn-default' type='button' name='checkAll'>Check All</button> <button type='button' class='btn btn-default' name='uncheckAll'>Uncheck All</button></div>
+						</div>
 				</div>
 			</div>";
 		}
@@ -416,7 +415,7 @@ function setTotal($totalCal, $totalLip, $totalPro, $totalCarb){ ?>
 </div>
 
 <div id="sleep-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
-	<form method="post" action="todolist/activity/sleep">
+	<form method="post" action="todolist/activity/sleep" onSubmit="return validasiForm()">
 	  	<div class="modal-body">
 	  		<div class="container">
 	  			<div class="modal-dialog modal-sm">
@@ -429,16 +428,51 @@ function setTotal($totalCal, $totalLip, $totalPro, $totalCarb){ ?>
 						  		<input type="hidden" name="catId" value="">
 						  		<input type="hidden" name="listId" value="">
 								<input type="hidden" name="date" value="">
-								<div class="form-group col-sm-8">
+								<div class="form-group col-sm-12">
 									<label for="Category">Kategori</label>
 									<input type="text" name="category" value="" class="form-control input-small" readonly="readonly">
 								</div>
-								<div class="form-group col-sm-6" id="porsi">
-									<label for="Porsi">Porsi</label>
-									<input type="text" name="hour" value="" class="form-control input-small">
-								</div>
+								<div class="form-group col-sm-12">
+					                <label for="dtp_input1" class="control-label">Waktu</label>
+					                <div class="input-group date form_datetime" data-date-format="dd/mm/yyyy HH:ii p" data-link-field="dtp_input1">
+					                    <input class="form-control" type="text" value="" readonly>
+					                    <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+										<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+					                </div>
+									<input type="hidden" id="dtp_input1" name="hour" value="" /><br/>
+					            </div>
 						</div>
-						<div class="modal-footer"><input type="submit" name="submit" class="btn btn-primary" value="Save"></div>
+						<div class="modal-footer"><input type="submit" name="submit" class="btn btn-primary" value="Simpan"></div>
+			    	</div>
+			    </div>
+			</div>
+	  	</div>
+	</form>
+</div>
+
+<div id="save-list-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+	<form method="post" action="todolist/simpanlist" onSubmit="return validasiForm()">
+	  	<div class="modal-body">
+	  		<div class="container">
+	  			<div class="modal-dialog">
+			    	<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+							</button>
+							<div class="page-header"><h2 class="text-center">SIMPAN AGENDA SEBAGAI MENU</h2></div>	
+					  		<input type="hidden" name="id" value="">
+							<div class="form-group col-sm-12">
+								<label for="Menu">Judul Menu</label>
+								<input type="text" name="judul" value="" class="form-control input-small" required>
+							</div>
+							<div class="form-group col-sm-12">
+						  		<label for="comment">Deskripsi:</label>
+							  	<textarea class="form-control" rows="3" name="deskripsi" required></textarea>
+								<div class="checkbox"><label><input type="checkbox" name="shared" value="1">Bagikan</label></div>
+							</div> 
+						</div>
+						<div class="modal-footer"><input type="submit" name="submit" class="btn btn-primary" value="Simpan"></div>
 			    	</div>
 			    </div>
 			</div>
@@ -499,6 +533,32 @@ function setTotal($totalCal, $totalLip, $totalPro, $totalCarb){ ?>
 								<label for="BB">Berat Badan (kg)</label>
 								<input id="weight" name="weight" type="text" class="form-control input-small">
 						    </div>
+						</div>
+						<div class="modal-footer"><input class="btn btn-primary" type="submit" name="submit" value="Simpan"></div>
+			    	</div>
+			    </div>
+		    </div>
+	  	</div>
+	</form>
+</div>
+
+<div id="edit-list-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+	<form method="post" action="todolist/editlist">
+	  	<div class="modal-body">
+	  		<div class="container">
+			    <div class="modal-dialog modal-lg">
+		    			<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+							</button>
+							<div class="page-header"><h2 class="text-center">UBAH AGENDA ANDA</h2></div>	
+					  		<input type="hidden" name="listId" value="">
+					        <div class="form-group col-sm-12"> 
+					        	<div id="tableEdit">
+
+					        	</div>
+							</div>
 						</div>
 						<div class="modal-footer"><input class="btn btn-primary" type="submit" name="submit" value="Simpan"></div>
 			    	</div>
@@ -694,5 +754,13 @@ $('input[name="portion"]').on('change', function(){
 		alert('harap diisi dalam format angka !');
 		$(this).focus();
 	}
+});
+
+$("button[name='checkAll']").click(function() {
+	$(this).parent().parent().find('input[name="calId[]"]').prop("checked", true);
+});
+
+$("button[name='uncheckAll']").click(function() {
+	$(this).parent().parent().find('input[name="calId[]"]').prop("checked", false);
 });
 </script>
