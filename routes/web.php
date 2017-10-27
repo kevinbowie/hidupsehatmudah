@@ -164,8 +164,6 @@ Route::post('/menu/add-plan', 'CRUDController@insertToDoList');
 
 Route::get('/menu/food/{jenis}', 'CRUDController@viewMenu');
 
-Route::get('/goals', ['as' => 'goals', 'uses' => 'CRUDController@viewGoals']);
-
 Route::get('/steps', ['as' => 'steps', 'uses' => 'CRUDController@viewSteps']);
 
 Route::get('/steps/{date}', [

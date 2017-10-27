@@ -9,7 +9,7 @@ $result3 = mysqli_query($connection->myconn, $ssql3);
 $cat = mysqli_fetch_array($result3);
 if ($cat['category_id'] != 4){
 	$ssql = "select id, list_id, cal_id, cal_title, protein, fat, carbohydrate, calories, portion, gram, unit_id
-			from to_do_list_dtl where list_id = '" . $id . "';";
+			from to_do_list_dtl where list_id = '" . $id . "' order by cal_title;";
 	$result = mysqli_query($connection->myconn, $ssql);
 	$html = "<table class='table table-hover'>
 		<tr>

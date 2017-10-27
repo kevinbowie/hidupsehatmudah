@@ -1,3 +1,14 @@
+<?php 
+if (isset($_GET['month']) && isset($_GET['year'])){
+    $bln = $_GET['month'];
+    $thn = $_GET['year'];
+}
+else{
+    $bln = date("m");
+    $thn = date("Y");
+}
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,51 +24,63 @@
 		.table th{
 			text-align: center;
 		}
-		.btn-twitter {
-			padding-left: 30px;
-			background: rgba(0, 0, 0, 0) -20px 6px no-repeat;
-			background-position: -20px 11px !important;
-		}
-		.btn-twitter:hover {
-			background-position:  -20px -18px !important;
-		}
-		.form-control{
-			width: 200px;
-		}
 		body{
 		    background: url("images/bg green.jpg") no-repeat center;
 		    background-size: cover;
 		}
 	</style>
-	<script type="text/javascript">
-	$(function(ready){
-		/*$('#btnCategory').click(function(){
-			var value = $('#category').val();
-			$('form').attr('action', '../scoreboard/' + value.toLowerCase());
-		});*/
-	});
-	</script>
 </head>
 <body>
 @include('navbar/navbar_2')
 <div class="container">
 	<div class="row">
-		<!-- <div class="col-md-7"> -->
+		<div class="col-lg-9">
 			<form method="GET" action="<?php route('scoreboard'); ?>">
-				<label for="category">Kategori</label>
-				<select class="form-control" name="category" id="category">
-					<option value="All" selected>Semua</option>
-					<option value="Breakfast">Sarapan</option>
-					<option value="Lunch">Makan Siang</option>
-					<option value="Dinner">Makan Malam</option>
-					<option value="Exercise">Olahraga</option>
-					<option value="Sleep">Tidur</option>
-					<option value="Drink">Minum</option>
-				</select>
+                <!-- <div class="col-lg-6"> -->
+                	<div class="col-sm-3 form-group">
+						<label for="category">Kategori</label>
+						<select class="form-control" name="category" id="category">
+							<option value="All">Semua</option>
+							<option value="Breakfast">Sarapan</option>
+							<option value="Lunch">Makan Siang</option>
+							<option value="Dinner">Makan Malam</option>
+							<option value="Exercise">Olahraga</option>
+							<option value="Sleep">Tidur</option>
+							<option value="Drink">Minum</option>
+						</select>
+					</div>
+					<div class="col-sm-3 form-group">
+						<label for="mode">Mode</label>
+						<select class="form-control" name="mode" id="mode" style="width: 150px;">
+							<option value="1">Tabel</option>
+							<option value="2">Grafik Terpisah</option>
+							<option value="3">Satu Grafik</option>
+						</select>
+					</div>
+				<!-- </div> --><!-- 
+				<div class="col-lg-6">
+                    <div class="row"> -->
+                        <div class="col-sm-3 form-group">
+                            <label>Tahun</label>
+                            <div class="form-group">
+                                <input type="text" name="year" id="year" value="<?php echo $thn; ?>" class="form-control input-small" readonly>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 form-group">
+                            <label>Bulan</label>
+                            <div class="form-group">
+                                <input type="text" name="month" id="month" value="<?php echo $bln; ?>" class="form-control input-small" readonly>
+                            </div>
+                        </div>  <!-- 
+                    </div>  
+                </div> -->
 				<br>
-				<button class="btn btn-primary" type="submit" id="btnCategory">Tampilkan</button><br><br>
-				<div class='alert alert-info text-center'>Streak digunakan untuk menghitung kedisiplinan pengguna dalam memenuhi hidup sehat secara berturut-turut tanpa henti</div>
+				<div class="col-sm-3"><button class="btn btn-primary" type="submit" id="btnCategory">Tampilkan</button></div><br><br>
 			</form>
+		</div>
+		<div class="col-lg-12">
+			<br>
+			<div class='alert alert-info text-center'>Streak digunakan untuk menghitung kedisiplinan pengguna dalam memenuhi hidup sehat secara berturut-turut tanpa henti</div>
 		<?php 
 		$i = 1; $lastCategory = ""; $nowCategory = ""; $len = count($data); $exists = false; $reload = true; $j = 1;
 		?>
@@ -159,31 +182,31 @@
       			echo "</tbody></table><br><div class='alert alert-info'>Streak terpenuhi jika durasi jam tidur sekitar 6 - 9 jam</div>";
       		} ?>
 		@endforeach
-		<!-- </div> -->
-		<!-- <div class="col-lg-5">
-			<div class="page-header">
-				<div class="pull-right form-inline">
-					<div class="btn-group">
-						<button class="btn btn-primary" data-calendar-nav="prev"><< Prev</button>
-						<button class="btn" data-calendar-nav="today">Today</button>
-						<button class="btn btn-primary" data-calendar-nav="next">Next >></button>
-					</div>
-					<div class="btn-group">
-						<button class="btn btn-warning" data-calendar-view="year">Year</button>
-						<button class="btn btn-warning active" data-calendar-view="month">Month</button>
-					</div>
-				</div>
-				<h3></h3>
-			</div>
-			<div class="span6"><div id="calendar"></div></div>
-		</div> -->
-		<!-- </div> -->
 		</div>
 	</div>
-	<script type="text/javascript" src="../bootstrap/js/underscore-min.js"></script>
 	<script src="../bootstrap/js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="../bootstrap/js/calendar.js"></script>
-	<script type="text/javascript" src="../bootstrap/js/app.js"></script>
 </div>
 </body>
 </html>
+
+<script type="text/javascript">
+	$('#mode').on('change', function(){
+		if($(this).val() != 1){
+			$('#year').prop('readonly', false);
+			$('#month').prop('readonly', false);
+		}
+		else{
+			$('#year').prop('readonly', true);
+			$('#month').prop('readonly', true);	
+		}
+	});
+
+	$('#btnCategory').on('click', function(){
+		if ($('#mode').val() > 1){
+			if ($('#category').val() == 'All'){
+				alert('Untuk Mode Grafik Hanya Boleh Memilih Salah Satu Kategori');
+				return false;
+			}
+		}
+	});
+</script>

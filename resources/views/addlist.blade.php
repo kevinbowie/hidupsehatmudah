@@ -434,12 +434,12 @@ function setTotal($totalCal, $totalLip, $totalPro, $totalCarb){ ?>
 								</div>
 								<div class="form-group col-sm-12">
 					                <label for="dtp_input1" class="control-label">Waktu</label>
-					                <div class="input-group date form_datetime" data-date-format="dd/mm/yyyy HH:ii p" data-link-field="dtp_input1">
-					                    <input class="form-control" type="text" value="" readonly>
-					                    <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+					                <!-- <div class="input-group date form_datetime" data-date-format="dd/mm/yyyy HH:ii p" data-link-field="dtp_input1"> -->
+					                    <input class="form-control" type="text" value="" name="getTime" readonly>
+					                    <!-- <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
 										<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-					                </div>
-									<input type="hidden" id="dtp_input1" name="hour" value="" /><br/>
+					                </div> -->
+									<!-- <input type="hidden" id="dtp_input1" name="hour" value="" /><br/> -->
 					            </div>
 						</div>
 						<div class="modal-footer"><input type="submit" name="submit" class="btn btn-primary" value="Simpan"></div>

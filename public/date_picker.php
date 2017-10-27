@@ -1,6 +1,6 @@
 <?php 
 include ('dbconfig.php');
-$date = isset($_POST['date']) ? date_format(date_create($_POST['date']), "y-m-d") : date("Y-m-d");
+$date = isset($_POST['date']) ? date_format(date_create($_POST['date']), "Y-m-d") : date("Y-m-d");
 $userId = $_POST['userId'];
 $userCal = round($_POST['userCalories']);
 $userPro = round($userCal * 0.15);
@@ -141,10 +141,20 @@ if ($result->num_rows > 0){
 					echo "</td>
 					</tr>";
 					break;
+				case 6:
+					echo "<td class='text-center'>";
+					if (! $GLOBALS['complete']){
+							echo "<button class='btn btn-default btn-xs edit-act' data-toggle='modal' data-jenis='" . $kategori[$index - 1] . "' data-target='#sleep-modal' data-list='" . $data['id'] . "' data-kategori='" . $data['category_id'] . "'>UBAH</button>";
+					}
+					echo "</td></tr>
+					</tr>";
+					break;
 				default:
 					echo "<td class='text-center'>";
 					if (! $GLOBALS['complete']){
-						echo "<button class='btn btn-default btn-xs edit-act' data-toggle='modal' data-jenis='" . $kategori[$index - 1] . "' data-target='#sleep-modal' data-list='" . $data['id'] . "' data-kategori='" . $data['category_id'] . "'>UBAH</button>";
+						if ($GLOBALS['sleep'] != ""){
+							echo "<button class='btn btn-default btn-xs edit-act' data-toggle='modal' data-jenis='" . $kategori[$index - 1] . "' data-target='#sleep-modal' data-list='" . $data['id'] . "' data-kategori='" . $data['category_id'] . "'>UBAH</button>";
+						}
 					}
 					echo "</td></tr>
 					</tr>";
@@ -169,19 +179,19 @@ function cekTercapai($userCal, $userCarb, $userPro, $userLip, $ttlCarb, $ttlLip,
 		<p>Kalori Masuk : " . $userCal . " Kalori</p>
 		<p>Karbohidrat : " . $userCarb . " Kalori"; 
 			if (($userCarb - $ttlCarb >= -100) && ($userCarb - $ttlCarb <= 200)){
-				echo " (Tercapai)";
+				echo " <span class='glyphicon glyphicon-ok' aria-hidden='true'></span>";
 			}
 			else {
-				echo " (Belum Tercapai)"; 
+				echo " <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>"; 
 				$msg = "Coba lebih perhatikan konsumsi karbohidrat";
 			}
 	echo "</p>
 		<p>Lemak : " . $userLip . " Kalori";
 			if (($ttlLip >= 100) && ($userLip - $ttlLip >= -100)){
-				echo " (Tercapai)";
+				echo " <span class='glyphicon glyphicon-ok' aria-hidden='true'></span>";
 			}
 			else {
-				echo " (Belum Tercapai)"; 
+				echo " <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>"; 
 				if ($msg != "")
 					$msg = $msg . ", Lemak"; 
 				else 
@@ -190,10 +200,10 @@ function cekTercapai($userCal, $userCarb, $userPro, $userLip, $ttlCarb, $ttlLip,
 	echo "</p>
 		<p>Protein : " . $userPro . " Kalori"; 
 			if (($userPro - $ttlPro >= -100) && ($userPro - $ttlPro <= 100)){
-				echo " (Tercapai)";
+				echo " <span class='glyphicon glyphicon-ok' aria-hidden='true'></span>";
 			}
 			else {
-				echo " (Belum Tercapai)"; 
+				echo " <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>"; 
 				if ($msg != "")
 					$msg = $msg . ", Protein"; 
 				else 
@@ -202,10 +212,10 @@ function cekTercapai($userCal, $userCarb, $userPro, $userLip, $ttlCarb, $ttlLip,
 	echo "</p>
 		<p>Olahraga";
 			if ($ttlOther[0] >= 0.5){
-				echo " (Tercapai)";
+				echo " <span class='glyphicon glyphicon-ok' aria-hidden='true'></span>";
 			}
 			else {
-				echo " (Belum Tercapai)"; 
+				echo " <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>"; 
 				if ($msg != "")
 					$msg = $msg . "<br>Berolahragalah setiap hari minimal setengah jam (untuk aktivitas ringan) !"; 
 				else 
@@ -214,10 +224,10 @@ function cekTercapai($userCal, $userCarb, $userPro, $userLip, $ttlCarb, $ttlLip,
 	echo "</p>
 		<p>Minum";
 			if ($ttlOther[1] >= 2){
-				echo " (Tercapai)";
+				echo " <span class='glyphicon glyphicon-ok' aria-hidden='true'></span>";
 			}
 			else {
-				echo " (Belum Tercapai)"; 
+				echo " <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>"; 
 				if ($msg != "")
 					$msg = $msg . "<br>Minumlah minimal 2 Liter air setiap hari !"; 
 				else 
@@ -229,10 +239,10 @@ function cekTercapai($userCal, $userCarb, $userPro, $userLip, $ttlCarb, $ttlLip,
 			$date2 = date_create($ttlOther[3]);
 			$diff = date_diff($date1, $date2);
 			if ($diff->format("%h") >= 6 && $diff->format("%h") <= 9){
-				echo " (Tercapai)";
+				echo " <span class='glyphicon glyphicon-ok' aria-hidden='true'></span>";
 			}
 			else {
-				echo " (Belum Tercapai)"; 
+				echo " <span class='glyphicon glyphicon-remove' aria-hidden='true'></span>"; 
 				if ($msg != "")
 					$msg = $msg . "<br>Beristirahatlah minimal 6 - 9 jam setiap hari !"; 
 				else 
@@ -357,7 +367,7 @@ function food_recommended($UCalories, $date, $index, $listId, $userId){
 function setTotal($listId){ 
 	$connection = new createConn();
 	$ssql = "SELECT sum(protein) as protein, sum(carbohydrate) as carb, sum(fat) as fat 
-			FROM `to_do_list_dtl` WHERE list_id = " . $listId . ";"; 
+			FROM `to_do_list_dtl` WHERE list_id = " . $listId . " order by cal_title;"; 
 	$connection->connect();
 	$result = mysqli_query($connection->myconn, $ssql);
 	$totalCal = 0;
@@ -802,16 +812,33 @@ $(document).ready(function() {
 			var portion;
 			var date = new Date();
 			date = "<?php echo $date; ?>";
+			var d = new Date();
+			var curr_hour = d.getHours();
+			var curr_min = d.getMinutes();
+			var curr_sec = d.getSeconds();
+			var curr_date = d.getDate();
+			var curr_month = d.getMonth()+1;
+			var curr_year = d.getFullYear();
+
+			<?php
+			if ($sleep == "") {?>
+				var getTime = curr_date + "-" + curr_month + "-" + curr_year + " " + curr_hour + ":" + curr_min + ":" + curr_sec; 
+			<?php }
+			else { ?>
+				var getTime = new Date("<?php echo $sleep; ?>");
+			<?php } ?>
 
 			$('.form_datetime').each(function() {
 				if (jenis == "Tidur"){
-				    var minDate = new Date("<?php echo "20".$date; ?>");
+				    var minDate = new Date("<?php echo $date; ?>");
 				    minDate.setHours(0);
 				    minDate.setMinutes(0);
 				    minDate.setSeconds(0,0);
 				}
-				else
+				else{
 					var minDate = new Date("<?php echo $sleep; ?>");
+					getTime = curr_date + "-" + curr_month + "-" + curr_year + " " + curr_hour + ":" + curr_min + ":" + curr_sec; 
+				}
 
 			    var $picker = $(this);
 			    $picker.datetimepicker();
@@ -837,6 +864,7 @@ $(document).ready(function() {
 			$(e.currentTarget).find('input[name="date"]').val(date);
 			$(e.currentTarget).find('input[name="category"]').val(jenis);
 			$(e.currentTarget).find('input[name="portion"]').val(portion);
+			$(e.currentTarget).find('input[name="getTime"]').val(getTime);
 		});
 	});
 

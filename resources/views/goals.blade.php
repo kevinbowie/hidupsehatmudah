@@ -62,6 +62,8 @@ else{
                     $get += $values->calories;
                     $goal += $values->calories_goal;
                 }
+                if ($i == 0)
+                    $i = 1;
                 $get = $get/$i;
                 $goal = $goal/$i;
                 if ($goal - $get >= 300)
@@ -83,6 +85,8 @@ else{
                     $get += $values->protein;
                     $goal += $values->protein_goal;
                 }
+                if ($i == 0)
+                    $i = 1;
                 $get = $get/$i;
                 $goal = $goal/$i;
                 if ($goal - $get >= 150)
@@ -103,6 +107,8 @@ else{
                     $get += $values->fat;
                     $goal += $values->fat_goal;
                 }
+                if ($i == 0)
+                    $i = 1;
                 $get = $get/$i;
                 $goal = $goal/$i;
                 if ($goal - $get >= 150)
@@ -123,6 +129,8 @@ else{
                     $get += $values->fat;
                     $goal += $values->fat_goal;
                 }
+                if ($i == 0)
+                    $i = 1;
                 $get = $get/$i;
                 $goal = $goal/$i;
                 if ($goal - $get >= 150)
@@ -144,6 +152,8 @@ else{
                     $i++;
                     $get += $values->exercise;
                 }
+                if ($i == 0)
+                    $i = 1;
                 $get = $get/$i;
                 if ($get < 0.5)
                     $msg = "<div class='alert alert-warning text-center'>Kegiatan Olahraga Anda Rata-Rata Kurang Terpenuhi dari 0.5 Jam</div>";
@@ -160,6 +170,8 @@ else{
                     $i++;
                     $get += $values->drink;
                 }
+                if ($i == 0)
+                    $i = 1;
                 $get = $get/$i;
                 if ($get < 2)
                     $msg = "<div class='alert alert-warning text-center'>Konsumsi Minum Anda Rata-Rata Kurang Terpenuhi dari 2 Liter</div>";
@@ -176,6 +188,8 @@ else{
                     $i++;
                     $get += $values->sleep;
                 }
+                if ($i == 0)
+                    $i = 1;
                 $get = $get/$i;
                 if ($get < 6)
                     $msg = "<div class='alert alert-warning text-center'>Kebutuhan Tidur Anda Rata-Rata Kurang Terpenuhi dari 6 Jam</div>";
@@ -195,6 +209,8 @@ else{
                     $get += $values->weight;
                     $goal += $values->weight_goal;
                 }
+                if ($i == 0)
+                    $i = 1;
                 $get = $get/$i;
                 $goal = $goal/$i;
                 if ($goal - $get >= 5)

@@ -1132,7 +1132,38 @@ class CRUDController extends Controller
         $current = Carbon::now()->format('y-m-d H:i:s');
         User::where('id', Auth::user()->id)
         ->update(['last_login'=>$current]);
+        $bulan = array("Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember");
+        $year = Input::get('year');
+        $month = Input::get('month');
         $category = Input::get('category');
+        $mode = Input::get('mode');
+
+        if ($mode > 1){
+            if (is_null($year) && is_null($month)){
+                $month = date("m");
+                $year = date("Y");
+            }
+
+            $user = User::select('id', 'first_name', 'last_name')
+                    ->where('access_id', 2)
+                    ->orderby('id')
+                    ->get();
+
+            for ($i=0;$i<count($user);$i++){
+                $userDtl[$i] = DB::table('to_do_list')
+                        ->select('user_id', 'streak', DB::raw("day(date) as date"))
+                        ->where('category', $category)
+                        ->where('user_id', $user[$i]->id)
+                        ->whereMonth('date', $month)
+                        ->whereYear('date', $year)
+                        ->orderby('date')
+                        ->get();
+            }
+
+            return View('scoreboard_streak')->with(['user'=>$user, 'userDtl'=>$userDtl, 'category'=>$category, 'countUser'=>count($user)]);
+        }
+
+
         $nonCat = Category::select('id')
                   ->where('category', 'wakeup')
                   ->first();

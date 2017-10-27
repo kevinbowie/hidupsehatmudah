@@ -11,7 +11,7 @@
 
 <script type="text/javascript" src="bootstrap/js/bootstrap-birthday.js"></script>
 <script type="text/javascript">
-$(document).ready(function() {
+/* $(document).ready(function() {
 	$('.form_date').datetimepicker({
 	    weekStart: 1,
 	    todayBtn:  1,
@@ -30,7 +30,7 @@ $(document).ready(function() {
 	    showMeridian: false,
 	    defaultTime: false
 	});
-});
+}); */
 </script>
 
 <div id="edit-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
@@ -68,7 +68,7 @@ $(document).ready(function() {
 					    </div>
 						<label for="activity">Aktivitas Fisik</label>
 						<select class="form-control" name="activity">
-							<option value="0" selected>Aktivitas</option>
+							<option value="0">Aktivitas</option>
 							<option value="Rest">Sangat Ringan</option>
 							<option value="Light">Ringan</option>
 							<option value="Normal">Biasa</option>
