@@ -250,7 +250,7 @@ $(document).ready(function() {
 	$("a.delete").click(function(){
 		var menuName = $(this).parents('.panel-footer').siblings('.panel-heading').find('a');
 		menuName = menuName.clone().children().remove().end().text();
-		if (confirm("are you sure want to delete '" + menuName + "' ?"))
+		if (confirm("anda yakin ingin menghapus menu '" + menuName + "' ?"))
 			return true;
 		return false;
 	});
@@ -284,7 +284,7 @@ $(document).ready(function() {
 	$('button#new-menu').on('click', function(event){
 		event.preventDefault();
 		var menuName = $('input[name="menuNamess"]').val();
-		$('form').attr('action', 'menu/add/' + menuName);
+		$('form').attr('action', 'menu/add/owner/' + menuName);
 		$('form').submit();
 	});
 });

@@ -204,7 +204,7 @@ else{
 	$('#btnCategory').on('click', function(){
 		if ($('#mode').val() > 1){
 			if ($('#category').val() == 'All'){
-				alert('Untuk Mode Grafik Terpisah Hanya Boleh Memilih Salah Satu Kategori');
+				alert('Untuk Mode Grafik Hanya Boleh Memilih Salah Satu Kategori');
 				return false;
 			}
 		}

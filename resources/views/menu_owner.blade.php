@@ -136,7 +136,7 @@ $(document).ready(function() {
 	$("a.delete").click(function(){
 		var menuName = $(this).parents('.panel-footer').siblings('.panel-heading').find('a');
 		menuName = menuName.clone().children().remove().end().text();
-		if (confirm("are you sure want to delete '" + menuName + "' ?"))
+		if (confirm("anda yakin ingin menghapus menu '" + menuName + "' ?"))
 			return true;
 		return false;
 	});

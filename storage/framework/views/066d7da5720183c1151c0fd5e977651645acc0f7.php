@@ -185,7 +185,7 @@ $(document).ready(function() {
 	$('button#new-menu').on('click', function(event){
 		event.preventDefault();
 		var menuName = $('input[name="menuNamess"]').val();
-		$('form').attr('action', '../../menu/add/' + menuName);
+		$('form').attr('action', '../../menu/add/owner/' + menuName);
 		$('form').submit();
 	});
 });

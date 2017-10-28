@@ -144,14 +144,16 @@ if ($result->num_rows > 0){
 				case 6:
 					echo "<td class='text-center'>";
 					if (! $GLOBALS['complete']){
-							echo "<button class='btn btn-default btn-xs edit-act' data-toggle='modal' data-jenis='" . $kategori[$index - 1] . "' data-target='#sleep-modal' data-list='" . $data['id'] . "' data-kategori='" . $data['category_id'] . "'>UBAH</button>";
+							if ($GLOBALS['sleep'] == ""){ //muncul jika belum set jam tidur
+								echo "<button class='btn btn-default btn-xs edit-act' data-toggle='modal' data-jenis='" . $kategori[$index - 1] . "' data-target='#sleep-modal' data-list='" . $data['id'] . "' data-kategori='" . $data['category_id'] . "'>UBAH</button>";
+							}
 					}
 					echo "</td></tr>
 					</tr>";
 					break;
 				default:
 					echo "<td class='text-center'>";
-					if (! $GLOBALS['complete']){
+					if (! $GLOBALS['complete']){ //muncul jika sudah set jam tidur
 						if ($GLOBALS['sleep'] != ""){
 							echo "<button class='btn btn-default btn-xs edit-act' data-toggle='modal' data-jenis='" . $kategori[$index - 1] . "' data-target='#sleep-modal' data-list='" . $data['id'] . "' data-kategori='" . $data['category_id'] . "'>UBAH</button>";
 						}
@@ -820,25 +822,13 @@ $(document).ready(function() {
 			var curr_month = d.getMonth()+1;
 			var curr_year = d.getFullYear();
 
-			<?php
-			if ($sleep == "") {?>
-				var getTime = curr_date + "-" + curr_month + "-" + curr_year + " " + curr_hour + ":" + curr_min + ":" + curr_sec; 
-			<?php }
-			else { ?>
-				var getTime = new Date("<?php echo $sleep; ?>");
-			<?php } ?>
+			var getTime = curr_date + "-" + curr_month + "-" + curr_year + " " + curr_hour + ":" + curr_min + ":" + curr_sec; 
 
 			$('.form_datetime').each(function() {
-				if (jenis == "Tidur"){
-				    var minDate = new Date("<?php echo $date; ?>");
-				    minDate.setHours(0);
-				    minDate.setMinutes(0);
-				    minDate.setSeconds(0,0);
-				}
-				else{
-					var minDate = new Date("<?php echo $sleep; ?>");
-					getTime = curr_date + "-" + curr_month + "-" + curr_year + " " + curr_hour + ":" + curr_min + ":" + curr_sec; 
-				}
+			    var minDate = new Date("<?php echo $date; ?>");
+			    minDate.setHours(0);
+			    minDate.setMinutes(0);
+			    minDate.setSeconds(0,0);
 
 			    var $picker = $(this);
 			    $picker.datetimepicker();

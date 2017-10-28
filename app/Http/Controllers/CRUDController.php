@@ -906,8 +906,14 @@ class CRUDController extends Controller
                                 ->where('user_id', $userId)
                                 ->where('cat_id', $i + 1)
                                 ->first();
-                    $best = $streak->best_streak;
-                    $now = $streak->now_streak;
+                    if (! $streak){
+                        $best = 0;
+                        $now = 0;
+                    }
+                    else{
+                        $best = $streak->best_streak;
+                        $now = $streak->now_streak;
+                    }
 
                     if($sukses == 1){  //untuk update streak
                         if ($best == $now)
@@ -1410,6 +1416,10 @@ class CRUDController extends Controller
             $year = date("Y");
         }
 
+        $bb = User::select('bb_ideal', 'weight')
+                   ->where('id', Auth::user()->id)
+                   ->first();
+
         $data = DB::table('history')
                 ->select('weight', 'weight_goal', 'protein', 'protein_goal', 'fat', 'fat_goal', 'carbohydrate', 'carbohydrate_goal', 'calories', 'calories_goal', 'exercise', 'exercise_cal', 'drink', 'sleep', DB::raw("day(date) as date"))
                 ->where('user_id', Auth::user()->id)
@@ -1418,7 +1428,7 @@ class CRUDController extends Controller
                 ->orderby('date')
                 ->get();
         // dd($data);
-        return View('goals')->with(['data'=>$data, 'bulan'=>$bulan[$month-1]]);
+        return View('goals')->with(['data'=>$data, 'bulan'=>$bulan[$month-1], 'bb'=>$bb]);
     }
 
     public function viewSteps(){
