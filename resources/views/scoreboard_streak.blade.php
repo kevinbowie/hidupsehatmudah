@@ -56,7 +56,6 @@ $lastDate = date('t');
 @include ('navbar/navbar_2')
 <body>
 <div class="container">
-	<h3 style="text-align: center;"><?php echo "Streak $category Bulan $bln Tahun $thn"; ?> </h3>
 	<div class="row">
 		<div class="col-lg-9">
             <form method="get" action="<?php route('goals'); ?>">
@@ -77,8 +76,7 @@ $lastDate = date('t');
 						<label for="mode">Mode</label>
 						<select class="form-control" name="mode" id="mode" style="width: 150px;">
 							<option value="1">Tabel</option>
-							<option value="2">Grafik Terpisah</option>
-							<option value="3">Satu Grafik</option>
+							<option value="2">Grafik</option>
 						</select>
 					</div>
                     <div class="col-sm-3 form-group">
@@ -99,8 +97,9 @@ $lastDate = date('t');
                 <!-- </div> -->
             </form>
         </div>
-		<div id="chart">
-		</div>
+        <div id="test"></div><br>
+		<h3 style="text-align: center;"><?php echo "Streak $category Bulan $bln Tahun $thn"; ?> </h3>
+		<div id="chart"></div>
 		<div id="showall"></div>
 		<br>
 	</div>
@@ -112,8 +111,68 @@ $lastDate = date('t');
 var title;
 var chart = $('#chart');
 
+Highcharts.chart('test', {
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: 'Grafik Streak Terakhir dan Tertinggi'
+    },
+    xAxis: {
+        categories: ['Terakhir', 'Tertinggi']
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Total streak'
+        },
+        stackLabels: {
+            enabled: true,
+            style: {
+                fontWeight: 'bold',
+                color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+            }
+        }
+    },
+    legend: {
+        align: 'right',
+        x: -30,
+        verticalAlign: 'top',
+        y: 25,
+        floating: true,
+        backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
+        borderColor: '#CCC',
+        borderWidth: 1,
+        shadow: false
+    },
+    tooltip: {
+        headerFormat: '<b>{point.x}</b><br/>',
+        pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
+    },
+    plotOptions: {
+        column: {
+            stacking: 'normal',
+            dataLabels: {
+                enabled: true,
+                color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
+            }
+        }
+    },
+    series: [ <?php
+    	$last = count($data);
+    	foreach($data as $value){
+    		echo "{
+    			name: '" . $value->user_fullname . "',
+    			data: [" . $value->now_streak . ", " . $value->best_streak . "]
+    			}";
+    		$last--;
+    		if ($last != 0)
+    			echo ",";
+    	} ?>
+    ]
+});
+
 <?php
-if ($_GET['mode'] == 2){
 for ($x=0;$x<$countUser;$x++){ ?>
 	title = "chart" + <?php echo $x; ?>;
 	chart.append("<div id='"+title+"'></div><br>");
@@ -192,97 +251,6 @@ for ($x=0;$x<$countUser;$x++){ ?>
 		            }       
 	            ?>]
 	        }
-	    ]
-	});
-<?php
-}
-}
-
-else{
-?>
-
-Highcharts.chart('showall', {
-	    title : {
-	        text: ''
-	    },
-
-	    subtitle : {
-	        //text: 'Source: WorldClimate.com'
-	    },
-
-	    xAxis : {
-	        title: {
-	            text: 'Tanggal'
-	        },
-	        categories: [ <?php
-	        	for($i=1;$i<=$lastDate;$i++){
-	        		if ($i != $lastDate){
-	        			echo $i . ', ';
-	        		}
-	        		else{
-	        			echo $i;
-	        		}
-	        	}
-	        ?>]
-	    },
-
-	    yAxis : {
-	        title: {
-	            text: 'Streak'
-	        },
-	        plotLines: [{
-	            value: 0,
-	            width: 1,
-	            color: '#808080'
-	        }]
-	    },
-
-	    tooltip : {
-	        valueSuffix: 'Streak'
-	    },
-
-	    legend : {
-	        layout: 'vertical',
-	        align: 'right',
-	        verticalAlign: 'middle',
-	        borderWidth: 0
-	    },
-
-	    series :  [
-	    	<?php
-	    	for ($x=0;$x<$countUser;$x++){ ?>
-				{
-	            name: '<?php echo $user[$x]->first_name . " " . $user[$x]->last_name; ?>',
-	            data: [<?php 
-	            	$data = array();
-	            	$j = 0;
-	            	for($j;$j<count($userDtl[$x]);$j++){
-	            		$data[$j]['date'] = $userDtl[$x][$j]->date;
-	            		$data[$j]['streak'] = $userDtl[$x][$j]->streak;
-	            	}
-		            if (count($data) == 0){
-		            	$data[0]['date'] = 1;
-		            	$data[0]['streak'] = 0;
-		            }
-		            $j = 0;
-		            for($i=1;$i<=$lastDate;$i++){
-		            	if ($i == $data[$j]['date']){
-		            		echo $data[$j]['streak'];
-		            		if ($j != count($data)-1)
-			            		$j++;
-		            	}
-		            	else
-		            		echo "0";
-		            	if ($i != $lastDate)
-		            		echo ", ";
-		            }       
-	            ?>]
-	        	} <?php
-
-	        	if ($x != $countUser - 1)
-	        		echo ",";
-	    	} ?>
-	        
 	    ]
 	});
 <?php

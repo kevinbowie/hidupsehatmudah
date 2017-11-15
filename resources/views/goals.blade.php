@@ -218,7 +218,7 @@ $lastDate = date('t');
                     $get = $get/$i;
                     $get = number_format((float)$get, 2, '.', '');
                     if ($get < 0.5)
-                        $msg = "<div class='alert alert-warning text-center'>Kegiatan Olahraga Anda Rata-Rata Kurang Terpenuhi dari 0.5 Jam";
+                        $msg = "<div class='alert alert-danger text-center'>Kegiatan Olahraga Anda Rata-Rata Kurang Terpenuhi dari 0.5 Jam";
                     else
                         $msg = "<div class='alert alert-success text-center'>Kegiatan Olahraga Anda Rata-Rata Terpenuhi dari 0.5 Jam";
                     $msg .= " <br>Anda perlu berolahraga setidaknya 0.5 jam setiap hari<br><br></div>";
@@ -241,7 +241,7 @@ $lastDate = date('t');
                     $get = $get/$i;
                     $get = number_format((float)$get, 2, '.', '');
                     if ($get < 2)
-                        $msg = "<div class='alert alert-warning text-center'>Konsumsi Minum Anda Rata-Rata Kurang Terpenuhi dari 2 Liter";
+                        $msg = "<div class='alert alert-danger text-center'>Konsumsi Minum Anda Rata-Rata Kurang Terpenuhi dari 2 Liter";
                     else
                         $msg = "<div class='alert alert-success text-center'>Konsumsi Minum Anda Rata-Rata Terpenuhi dari 2 Liter";
                     $msg .= " <br>Anda Perlu Konsumsi Air Minum Setidaknya 2 Liter Setiap Hari<br><br></div>";
@@ -264,7 +264,7 @@ $lastDate = date('t');
                     $get = $get/$i;
                     $get = number_format((float)$get, 2, '.', '');
                     if ($get < 6)
-                        $msg = "<div class='alert alert-warning text-center'>Kebutuhan Tidur Anda Rata-Rata Kurang Terpenuhi dari 6 Jam";
+                        $msg = "<div class='alert alert-danger text-center'>Kebutuhan Tidur Anda Rata-Rata Kurang Terpenuhi dari 6 Jam";
                     else if ($get > 9)
                         $msg = "<div class='alert alert-danger text-center'>Kebutuhan Tidur Anda Rata-Rata Berlebihan dari 9 Jam";
                     else

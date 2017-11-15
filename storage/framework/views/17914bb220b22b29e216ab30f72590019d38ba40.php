@@ -53,8 +53,7 @@ else{
 						<label for="mode">Mode</label>
 						<select class="form-control" name="mode" id="mode" style="width: 150px;">
 							<option value="1">Tabel</option>
-							<option value="2">Grafik Terpisah</option>
-							<option value="3">Satu Grafik</option>
+							<option value="2">Grafik</option>
 						</select>
 					</div>
 				<!-- </div> --><!-- 
@@ -127,7 +126,7 @@ else{
 				        	<th width='10%'>Nomor</th>
 				        	<th width='50%'>Nama</th>
 				        	<th width='17%' style='word-wrap: break-word;'>Streak Tertinggi</th>
-				        	<th width='17%'>Streak Sekarang</th>
+				        	<th width='17%'>Streak Terakhir</th>
 				      	</tr>
 			    	</thead>
 			    	<tbody>";

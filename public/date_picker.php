@@ -1,5 +1,6 @@
 <?php 
 include ('dbconfig.php');
+date_default_timezone_set("Asia/Jakarta");
 $date = isset($_POST['date']) ? date_format(date_create($_POST['date']), "Y-m-d") : date("Y-m-d");
 $userId = $_POST['userId'];
 $userCal = round($_POST['userCalories']);
@@ -24,7 +25,6 @@ $complete = false;
 
 cekComplete($date, $userId);
 sleephistory($date, $userId);
-
 $ssql = "select category_id, category, id, remind, time, sleep_wakeup_time from to_do_list where date = '" . $date . "' 
 		and user_id = " . $userId . " order by category_id;";
 $connection = new createConn();
@@ -34,7 +34,6 @@ $totalCal = 0;
 $totalCarb = 0;
 $totalLip = 0;
 $totalPro = 0;
-
 if ($result->num_rows > 0){
 	$index = 1; ?>
 	<div class="container">
@@ -61,17 +60,17 @@ if ($result->num_rows > 0){
 		echo $kategori[$index - 1] . "</th>
 		<td>";
 		if (! $GLOBALS['complete']){
-			echo "<a href='#reminder-modal' data-toggle='modal' data-kategori='" . $data['id'] . "' class='reminder'>";
+			echo "<button href='#reminder-modal' data-toggle='modal' data-kategori='" . $data['id'] . "' class='reminder btn btn-default'>";
 			if ($data['remind'])
 				echo $data['time'];
 			else
-				echo "(Atur Pengingat)";
+				echo "Tentukan";
 		}
 		else{
 			echo "Tidak ditentukan";
 		}
 
-		echo "</a></td>";
+		echo "</button></td>";
 		if ($index <= 3){
 			setTotal($data['id']);
 			echo "<td class='text-center'>";
@@ -506,7 +505,7 @@ function weight($tanggal, $userId, $userCal, $userPro, $userLip, $userCarb){
 			}
 	}
 	else{
-		echo "<div><a href='#weight-modal' data-toggle='modal' class='weight'>Tentukan berat badan anda hari ini</a></div>";
+		echo "<div style='margin-bottom: 10px;'><button href='#weight-modal' data-toggle='modal' class='weight btn btn-default'>Tentukan berat badan anda hari ini</button></div>";
 	}
 	mysqli_close($connection->myconn);	
 }

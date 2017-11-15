@@ -1144,6 +1144,11 @@ class CRUDController extends Controller
         $category = Input::get('category');
         $mode = Input::get('mode');
 
+        $nonCat = Category::select('id')
+                  ->where('category', 'wakeup')
+                  ->first();
+        $nonCat = $nonCat->id;
+
         if ($mode > 1){
             if (is_null($year) && is_null($month)){
                 $month = date("m");
@@ -1163,17 +1168,22 @@ class CRUDController extends Controller
                         ->whereMonth('date', $month)
                         ->whereYear('date', $year)
                         ->orderby('date')
-                        ->get();
+                        ->get(); 
             }
 
-            return View('scoreboard_streak')->with(['user'=>$user, 'userDtl'=>$userDtl, 'category'=>$category, 'countUser'=>count($user)]);
+            $data = DB::table('streak')
+                    ->select('user_id', 'user_fullname', 'cat_id', 'category', 'best_streak', 'now_streak')
+                    ->where('category', $category)
+                    ->where('cat_id', '<>', $nonCat)
+                    ->orderby('cat_id')
+                    ->orderby('best_streak', 'desc')
+                    ->orderby('now_streak', 'desc')
+                    ->orderby('user_fullname', 'asc')
+                    ->get();
+
+            return View('scoreboard_streak')->with(['user'=>$user, 'userDtl'=>$userDtl, 'category'=>$category, 'countUser'=>count($user), 'data'=>$data]);
         }
 
-
-        $nonCat = Category::select('id')
-                  ->where('category', 'wakeup')
-                  ->first();
-        $nonCat = $nonCat->id;
         if ($category != ""){
             if ($category == "All")   
                 $data = DB::table('streak')

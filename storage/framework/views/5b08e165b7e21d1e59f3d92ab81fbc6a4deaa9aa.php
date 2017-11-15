@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
   <script src="bootstrap/js/jquery.js"></script>
   <script src="bootstrap/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="bootstrap/js/bootstrap-birthday.js"></script>
   <style>
   body {
       font: 400 15px/1.8 Lato, sans-serif;
@@ -248,41 +249,5 @@
     </tbody>
   </table>
 </div>
-<script>
-$(document).ready(function(){
-  $('.edit').click(function(){
-    $("#edit-modal").on('show.bs.modal', function(e){
-      var firstname = $('table input:eq(0)').val();
-      var lastname = $('table input:eq(1)').val();
-      var username = $('table input:eq(2)').val();
-      var email = $('table input:eq(4)').val();
-      var gender = $('table input:eq(5)').val();
-      var height = $('table input:eq(6)').val();
-      var weight = $('table input:eq(7)').val();
-      var birthday = $('table input:eq(8)').val();
-      var activity = $('table input:eq(9)').val();
-      var goal = $('table input:eq(10)').val();
-      $(e.currentTarget).find('input:eq(0)').val(firstname);
-      $(e.currentTarget).find('input:eq(1)').val(lastname);
-      $(e.currentTarget).find('input:eq(2)').val(username);
-      $(e.currentTarget).find('input:eq(3)').val(email);
-      $(e.currentTarget).find('select[name="gender"]').val(gender);
-      $(e.currentTarget).find('input:eq(4)').val(height);
-      $(e.currentTarget).find('input:eq(5)').val(weight);
-      $(e.currentTarget).find('select[name="activity"]').val(activity);
-      $(e.currentTarget).find('input:eq(8)').val(goal);
-      var birth = birthday.split('-');
-      if (birth[0].substring(0, 1) == 0)
-        birth[0] = birth[0].substring(1, 2);
-      if (birth[1].substring(0, 1) == 0)
-        birth[1] = birth[1].substring(1, 2);
-      $(e.currentTarget).find('select[name="birthday[day]"]').val(birth[0]);
-      $(e.currentTarget).find('select[name="birthday[month]"]').val(birth[1]);
-      $(e.currentTarget).find('select[name="birthday[year]"]').val(birth[2]);
-    });
-  });
-});
-</script>
-
 </body>
 </html>
