@@ -674,7 +674,6 @@ class CRUDController extends Controller
                    ->where('date', $date)
                    ->where('user_id', Auth::user()->id)
                    ->exists();
-
         if ($history){
             DB::table('history')
             ->where('date', $date)

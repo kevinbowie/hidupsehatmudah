@@ -480,6 +480,7 @@ function weight($tanggal, $userId, $userCal, $userPro, $userLip, $userCarb){
 	$ssql = "SELECT weight, round(protein_goal/3) as pro, round(carbohydrate_goal/3) as carb, round(fat_goal/3) as fat, 
 			round(calories_goal/3) as cal, weight_goal
 			from history where date = '" . $tanggal . "' and user_id = " . $userId . ";";
+	// echo $ssql;
 	$connection->connect();
 	$result = mysqli_query($connection->myconn, $ssql);
 	if ($result->num_rows > 0){
@@ -877,7 +878,7 @@ $(document).ready(function() {
 		});
 	});
 
-	$("a.weight").click(function(){
+	$("button.weight").click(function(){
 		$("#weight-modal").on('show.bs.modal', function(e){
 			var date = new Date();
 			date = "<?php echo $date; ?>";
