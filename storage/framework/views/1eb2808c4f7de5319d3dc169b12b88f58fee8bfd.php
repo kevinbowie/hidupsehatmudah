@@ -9,7 +9,6 @@
 }
 </style>
 
-<script type="text/javascript" src="bootstrap/js/bootstrap-birthday.js"></script>
 <script type="text/javascript">
 /* $(document).ready(function() {
 	$('.form_date').datetimepicker({

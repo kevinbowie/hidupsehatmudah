@@ -35,19 +35,14 @@
 		<div class="page-header">
 		  	<div class="pull-left">
 		  	<?php if($jenis == 'food'): ?>
-		  		<h2>Daftar Makanan</h2></div>
+		  		<h2>Daftar Kategori Makanan</h2></div>
 		  	<?php else: ?>
-		  		<h2>Daftar Olahraga</h2></div>
+		  		<h2>Daftar Kategori Olahraga</h2></div>
 		  	<?php endif; ?>
 			<?php if(Auth::user()->access_id == 1): ?>
 				<?php echo $__env->make('new_calories', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
-  				<div class='pull-right' style='margin-top: 30px; margin-right: 15px;'><a href='#new-calories-modal' data-toggle='modal'>
-  					<?php if($jenis == 'food'): ?>
-  						Tambah Makanan
-  					<?php else: ?>
-  						Tambah Olahraga
-  					<?php endif; ?>
-  				</a> | <a href='#new-unit-modal' data-toggle='modal'>Tambah Satuan</a> | <a href='#new-category-modal' data-toggle='modal'>Tambah Kategori</a></div>
+  				<div class='pull-right' style='margin-top: 30px; margin-right: 15px;'><a href='#new-calories-modal' data-toggle='modal'>Tambah Daftar</a> | 
+  					<a href='#new-unit-modal' data-toggle='modal'>Tambah Satuan</a> | <a href='#new-category-modal' data-toggle='modal'>Tambah Kategori</a></div>
   			<?php endif; ?>
 			<div class="clearfix"></div>
 	</div>

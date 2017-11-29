@@ -35,19 +35,14 @@
 		<div class="page-header">
 		  	<div class="pull-left">
 		  	@if ($jenis == 'food')
-		  		<h2>Daftar Makanan</h2></div>
+		  		<h2>Daftar Kategori Makanan</h2></div>
 		  	@else
-		  		<h2>Daftar Olahraga</h2></div>
+		  		<h2>Daftar Kategori Olahraga</h2></div>
 		  	@endif
 			@if (Auth::user()->access_id == 1)
 				@include('new_calories')
-  				<div class='pull-right' style='margin-top: 30px; margin-right: 15px;'><a href='#new-calories-modal' data-toggle='modal'>
-  					@if ($jenis == 'food')
-  						Tambah Makanan
-  					@else
-  						Tambah Olahraga
-  					@endif
-  				</a> | <a href='#new-unit-modal' data-toggle='modal'>Tambah Satuan</a> | <a href='#new-category-modal' data-toggle='modal'>Tambah Kategori</a></div>
+  				<div class='pull-right' style='margin-top: 30px; margin-right: 15px;'><a href='#new-calories-modal' data-toggle='modal'>Tambah Daftar</a> | 
+  					<a href='#new-unit-modal' data-toggle='modal'>Tambah Satuan</a> | <a href='#new-category-modal' data-toggle='modal'>Tambah Kategori</a></div>
   			@endif
 			<div class="clearfix"></div>
 	</div>

@@ -28,7 +28,7 @@
 							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
 								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 							</button>
-							<div class="page-header"><h2 class="text-center">TAMBAH MAKANAN</h2></div>
+							<div class="page-header"><h2 class="text-center">TAMBAH DAFTAR</h2></div>
 							<div class="form-group" id="title">
 								<label for="Menu">Judul</label>
 								<input type="text" name="title" value="" class="form-control input-small">
