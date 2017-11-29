@@ -182,3 +182,5 @@ Route::post('/profile/{edit}', 'CRUDController@editProfile');
 Route::get('/logout', 'CRUDController@logout');
 
 Route::post('/mobile/login', 'MobileController@login');
+
+Route::post('/mobile/register', 'MobileController@register');

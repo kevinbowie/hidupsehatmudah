@@ -865,7 +865,7 @@ $(document).ready(function() {
 		});
 	});
 
-	$("a.reminder").click(function(){
+	$("button.reminder").click(function(){
 		$("#reminder-modal").on('show.bs.modal', function(e){
 			var id = $(e.relatedTarget).data('kategori');
 			var date = new Date();
