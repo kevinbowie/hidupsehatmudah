@@ -758,6 +758,12 @@ class CRUDController extends Controller
             ->where('id', $idDtl)
             ->update(['portion'=>$data['portion']]);
         }
+
+        // DB::table('history')
+        // ->where('user_id', Auth::user()->id)
+        // ->where('date', $date)
+        // ->update(['drink'=>$nilai]);
+
         return Redirect::to('todolist')->with('success', 'agenda berhasil diubah');;
     }
 

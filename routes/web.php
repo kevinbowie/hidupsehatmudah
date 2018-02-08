@@ -184,3 +184,49 @@ Route::get('/logout', 'CRUDController@logout');
 Route::post('/mobile/login', 'MobileController@login');
 
 Route::post('/mobile/register', 'MobileController@register');
+
+Route::post('/mobile/editProfile', 'MobileController@editProfile');
+
+Route::post('/mobile/editPassword', 'MobileController@editPassword');
+
+Route::post('/mobile/viewGrafik', 'MobileController@viewGrafik');
+
+Route::post('/mobile/viewScoreboard', 'MobileController@viewScoreboard');
+
+Route::post('/mobile/viewListKalori', 'MobileController@viewCalories');
+
+Route::post('/mobile/viewSubListKalori', 'MobileController@viewSubCalories');
+
+Route::post('/mobile/todolist', 'MobileController@todolist');
+
+Route::post('/mobile/todolist/weight', 'MobileController@updateWeight');
+
+Route::post('/mobile/todolist/reset', 'MobileController@resetall');
+
+Route::post('/mobile/todolist/suggest', 'MobileController@addSuggest');
+
+Route::post('/mobile/todolist/rekom', 'MobileController@addToDoListByRecom');
+
+Route::post('/mobile/todolist/updateLain', 'MobileController@updateDataLain');
+
+Route::post('/mobile/todolist/getListCalories', 'MobileController@getListCalories');
+
+Route::post('/mobile/todolist/viewTodolistDetail', 'MobileController@getDataTodolistDetail');
+
+Route::post('/mobile/todolist/viewEditTodolistDetail', 'MobileController@getCaloriesDetail');
+
+Route::post('/mobile/todolist/updateDataKalori', 'MobileController@updateDataKalori');
+
+Route::post('/mobile/todolist/deleteDataKalori', 'MobileController@deleteDataKalori');
+
+Route::post('/mobile/todolist/tambahDataKalori', 'MobileController@tambahDataKalori');
+
+Route::post('/mobile/viewMenu', 'MobileController@viewMenu');
+
+Route::post('/mobile/deleteMenu', 'MobileController@deleteMenu');
+
+Route::post('/mobile/addMenuFromOther', 'MobileController@addMenuFromOther');
+
+Route::post('/mobile/viewMenuDetail', 'MobileController@viewMenuDetail');
+
+Route::post('/mobile/viewMenuDetail1', 'MobileController@viewMenuDetail1');

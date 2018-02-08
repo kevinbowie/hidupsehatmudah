@@ -41,7 +41,7 @@
             </ul>
           </li>
 
-          <li><?php echo "<a href='" . url('steps/') . "'>Langkah</a></li>"; ?>
+          <!-- <li><?php echo "<a href='" . url('steps/') . "'>Langkah</a></li>"; ?> -->
     	</ul>
     	<ul class="nav navbar-nav navbar-right">
 	      	<li class="active"><?php echo "<a href='" . url('profile/') . "'><span class='glyphicon glyphicon-user'></span>Profil</a></a></li>"; ?>
